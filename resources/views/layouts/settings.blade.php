@@ -22,10 +22,10 @@
         }
 
         $linkInactive = 'flex items-center gap-3 rounded-2xl px-4 py-3 font-black text-xs uppercase tracking-widest text-slate-300 hover:text-white hover:bg-white/10 transition';
-        $linkActive = 'flex items-center gap-3 rounded-2xl px-4 py-3 font-black text-xs uppercase tracking-widest bg-white/10 hover:bg-white/15 transition';
+        $linkActive = 'flex items-center gap-3 rounded-2xl px-4 py-3 font-black text-xs uppercase tracking-widest bg-white/10 text-white hover:bg-white/15 transition';
         $headerTitle = $title ?? __('Settings');
     @endphp
-    <body class="h-screen overflow-hidden bg-white text-slate-900">
+    <body class="h-screen overflow-hidden bg-white text-slate-900 dark:bg-zinc-950 dark:text-zinc-100">
         <div class="h-screen flex overflow-hidden">
             <div
                 id="settings-sidebar-backdrop"
@@ -40,8 +40,8 @@
             >
                 <div class="flex items-start justify-between gap-3 border-b border-white/10 px-6 py-6 lg:block">
                     <div class="min-w-0">
-                        <a href="{{ route('home') }}" class="block text-2xl font-black tracking-tighter italic">
-                            {{ __('home.brand_a') }}<span class="text-blue-500">{{ __('home.brand_b') }}</span>
+                        <a href="{{ route('home') }}" class="block text-2xl font-black tracking-tighter italic text-white">
+                            {{ __('roleui.settings_brand_a') }}<span class="text-blue-400">{{ __('roleui.settings_brand_b') }}</span>
                         </a>
                         <div class="mt-2 text-[10px] font-black uppercase tracking-[0.35em] text-slate-400">
                             {{ __('Settings') }}
@@ -92,13 +92,13 @@
             </aside>
 
             <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
-                <header class="sticky top-0 z-30 border-b border-slate-100 bg-white/90 backdrop-blur">
+                <header class="sticky top-0 z-30 border-b border-slate-100 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95">
                     <div class="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
                         <div class="flex min-w-0 items-center gap-2 sm:gap-3">
                             <button
                                 type="button"
                                 id="settings-sidebar-open"
-                                class="inline-flex shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-800 hover:border-blue-200 hover:bg-blue-50 lg:hidden"
+                                class="inline-flex shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-800 hover:border-blue-200 hover:bg-blue-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-blue-500 dark:hover:bg-zinc-800 lg:hidden"
                                 aria-controls="settings-sidebar"
                                 aria-expanded="false"
                                 aria-label="{{ __('roleui.open_menu') }}"
@@ -106,13 +106,13 @@
                                 <i class="fas fa-bars text-lg" aria-hidden="true"></i>
                             </button>
                             <div class="min-w-0">
-                                <div class="truncate text-xl font-black tracking-tighter italic lg:hidden">
-                                    {{ __('home.brand_a') }}<span class="text-blue-600">{{ __('home.brand_b') }}</span>
+                                <div class="truncate text-xl font-black tracking-tighter italic text-slate-900 dark:text-white lg:hidden">
+                                    {{ __('roleui.settings_brand_a') }}<span class="text-blue-600 dark:text-blue-400">{{ __('roleui.settings_brand_b') }}</span>
                                 </div>
-                                <div class="hidden truncate text-sm font-black uppercase tracking-widest text-slate-400 lg:block">
+                                <div class="hidden truncate text-sm font-black uppercase tracking-widest text-slate-400 dark:text-zinc-400 lg:block">
                                     {{ $headerTitle }}
                                 </div>
-                                <div class="truncate text-xs font-black uppercase tracking-widest text-slate-500 lg:hidden">
+                                <div class="truncate text-xs font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 lg:hidden">
                                     {{ $headerTitle }}
                                 </div>
                             </div>
@@ -121,28 +121,28 @@
                         <div class="flex shrink-0 items-center gap-2 sm:gap-3">
                             <a
                                 href="{{ route('dashboard') }}"
-                                class="hidden items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 transition hover:border-blue-200 hover:bg-blue-50/80 sm:flex"
+                                class="hidden items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 transition hover:border-blue-200 hover:bg-blue-50/80 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-blue-500 dark:hover:bg-zinc-800 sm:flex"
                                 title="{{ __('roleui.back_to_dashboard') }}"
                             >
-                                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-xs font-black text-white">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-xs font-black text-white dark:bg-blue-600">
                                     {{ auth()->user()?->initials() }}
                                 </div>
                                 <div class="max-w-[10rem] leading-tight">
-                                    <div class="truncate text-sm font-black text-slate-900">{{ auth()->user()?->name }}</div>
-                                    <div class="truncate text-[10px] font-black uppercase tracking-widest text-slate-400">{{ auth()->user()?->role }}</div>
+                                    <div class="truncate text-sm font-black text-slate-900 dark:text-white">{{ auth()->user()?->name }}</div>
+                                    <div class="truncate text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-zinc-400">{{ auth()->user()?->role }}</div>
                                     @if ($hospitalName)
-                                        <div class="truncate text-[10px] font-black uppercase tracking-widest text-blue-500">{{ $hospitalName }}</div>
+                                        <div class="truncate text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">{{ $hospitalName }}</div>
                                     @endif
                                 </div>
                             </a>
-                            <a href="{{ route('home') }}" class="whitespace-nowrap text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-600 sm:text-xs">
+                            <a href="{{ route('home') }}" class="whitespace-nowrap text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 sm:text-xs">
                                 {{ __('roleui.back_home') }}
                             </a>
                         </div>
                     </div>
                 </header>
 
-                <main class="mx-auto w-full max-w-[1440px] flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8">
+                <main class="mx-auto w-full max-w-[1440px] flex-1 overflow-y-auto bg-white px-4 py-6 sm:px-6 sm:py-8 dark:bg-zinc-900">
                     {{ $slot }}
                 </main>
             </div>
