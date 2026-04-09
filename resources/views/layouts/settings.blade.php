@@ -41,7 +41,7 @@
                 <div class="flex items-start justify-between gap-3 border-b border-white/10 px-6 py-6 lg:block">
                     <div class="min-w-0">
                         <a href="{{ route('home') }}" class="block text-2xl font-black tracking-tighter italic text-white">
-                            {{ __('roleui.settings_brand_a') }}<span class="text-blue-400">{{ __('roleui.settings_brand_b') }}</span>
+                            {{ __('roleui.settings_brand_a') }} <span class="text-blue-400">{{ __('roleui.settings_brand_b') }}</span>
                         </a>
                         <div class="mt-2 text-[10px] font-black uppercase tracking-[0.35em] text-slate-400">
                             {{ __('Settings') }}
@@ -107,7 +107,7 @@
                             </button>
                             <div class="min-w-0">
                                 <div class="truncate text-xl font-black tracking-tighter italic text-slate-900 dark:text-white lg:hidden">
-                                    {{ __('roleui.settings_brand_a') }}<span class="text-blue-600 dark:text-blue-400">{{ __('roleui.settings_brand_b') }}</span>
+                                    {{ __('roleui.settings_brand_a') }} <span class="text-blue-600 dark:text-blue-400">{{ __('roleui.settings_brand_b') }}</span>
                                 </div>
                                 <div class="hidden truncate text-sm font-black uppercase tracking-widest text-slate-400 dark:text-zinc-400 lg:block">
                                     {{ $headerTitle }}
