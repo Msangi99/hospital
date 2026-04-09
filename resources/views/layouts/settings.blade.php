@@ -32,7 +32,7 @@
 
         $linkInactive = 'flex items-center gap-3 rounded-2xl px-4 py-3 font-black text-xs uppercase tracking-widest text-slate-300 hover:text-white hover:bg-white/10 transition';
         $linkActive = 'flex items-center gap-3 rounded-2xl px-4 py-3 font-black text-xs uppercase tracking-widest bg-white/10 text-white hover:bg-white/15 transition';
-        $headerTitle = $title ?? __('Settings');
+        $headerTitle = $title ?? __('roleui.sidebar_account');
         $roleNavActive = '_settings_context_';
     @endphp
     <body class="h-screen overflow-hidden bg-white text-slate-900 dark:bg-white dark:text-slate-900">
@@ -54,7 +54,7 @@
                             {{ __('home.brand_a') }}<span class="text-blue-400">{{ __('home.brand_b') }}</span>
                         </a>
                         <div class="mt-2 text-[10px] font-black uppercase tracking-[0.35em] text-slate-400">
-                            {{ $settingsPortalLabel }} · {{ __('Settings') }}
+                            {{ $settingsPortalLabel }} · {{ __('roleui.sidebar_account') }}
                         </div>
                     </div>
                     <button
@@ -98,13 +98,10 @@
                 </nav>
 
                 <div class="shrink-0 border-t border-white/10 p-4 pt-3">
-                    <p class="mb-2 px-1 text-[10px] font-black uppercase tracking-[0.35em] text-slate-500">
-                        {{ __('roleui.sidebar_account') }}
-                    </p>
                     <div class="space-y-2">
                         <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? $linkActive : $linkInactive }}">
-                            <i class="fas fa-user w-5 text-blue-300"></i>
-                            <span>{{ __('Profile') }}</span>
+                            <i class="fas fa-user-cog w-5 text-blue-300"></i>
+                            <span>{{ __('roleui.sidebar_account') }}</span>
                         </a>
                     </div>
                 </div>

@@ -38,7 +38,7 @@
                         inputmode="numeric"
                         autocomplete="one-time-code"
                         placeholder="{{ __('authui.otp_label') }}"
-                        class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm"
+                        class="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm"
                     >
                 </div>
 
@@ -49,7 +49,7 @@
                         name="recovery_code"
                         autocomplete="one-time-code"
                         placeholder="{{ __('authui.recovery_code_title') }}"
-                        class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm"
+                        class="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm"
                     >
                 </div>
 

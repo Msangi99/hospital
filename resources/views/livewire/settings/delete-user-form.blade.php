@@ -15,7 +15,7 @@
             {{ __('Delete account') }}
         </button>
     @else
-        <div class="mt-6 rounded-[2rem] border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
+        <div class="mt-6 rounded-[2rem] border border-slate-200 bg-white p-6 sm:p-8">
             <p class="text-sm font-bold leading-relaxed text-slate-700">
                 {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
             </p>

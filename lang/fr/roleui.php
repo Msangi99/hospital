@@ -163,7 +163,7 @@ return [
     'owner_sidebar_schedules' => 'Plannings',
     'owner_sidebar_reports' => 'Rapports',
     'owner_sidebar_billing' => 'Facturation',
-    'owner_sidebar_settings' => 'Paramètres',
+    'owner_sidebar_settings' => 'Préférences de l\'hôpital',
     'owner_section_workers_desc' => 'Gérez les travailleurs de l\'hôpital et assignez les rôles de manière sécurisée.',
     'owner_section_departments_desc' => 'Organisez les départements de l\'hôpital et la structure des équipes.',
     'owner_section_services_desc' => 'Configurez le catalogue de services et leur disponibilité pour les patients.',

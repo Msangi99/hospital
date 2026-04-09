@@ -163,7 +163,7 @@ return [
     'owner_sidebar_schedules' => 'Schedules',
     'owner_sidebar_reports' => 'Reports',
     'owner_sidebar_billing' => 'Billing',
-    'owner_sidebar_settings' => 'Settings',
+    'owner_sidebar_settings' => 'Hospital preferences',
     'owner_section_workers_desc' => 'Manage hospital workers and assign scoped roles safely.',
     'owner_workers_title' => 'Hospital worker management',
     'owner_workers_desc' => 'Create and manage workers scoped to your hospital only.',

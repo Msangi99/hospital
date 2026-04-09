@@ -20,7 +20,7 @@
 
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.ai_provider') }}</label>
-                <select name="provider" required class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500">
+                <select name="provider" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500">
                     @foreach ($providers as $provider)
                         <option value="{{ $provider }}" @selected($setting->provider === $provider)>{{ strtoupper($provider) }}</option>
                     @endforeach
@@ -34,7 +34,7 @@
                     name="api_key"
                     id="ai-api-key"
                     autocomplete="off"
-                    class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500"
+                    class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500"
                     placeholder="{{ __('roleui.ai_api_key_hint') }}"
                 >
                 <p class="mt-2 text-xs font-bold text-slate-400">{{ __('roleui.ai_api_key_note') }}</p>
@@ -47,7 +47,7 @@
                         name="model"
                         id="ai-model-select"
                         required
-                        class="min-w-0 flex-1 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500"
+                        class="min-w-0 flex-1 rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500"
                     >
                         @php($currentModel = old('model', $setting->model))
                         <option value="{{ $currentModel }}">{{ $currentModel }}</option>
@@ -72,10 +72,10 @@
 
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.ai_system_prompt') }}</label>
-                <textarea name="system_prompt" rows="8" class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('safe_girl.ai_default_system_prompt') }}">{{ old('system_prompt', $setting->system_prompt) }}</textarea>
+                <textarea name="system_prompt" rows="8" class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('safe_girl.ai_default_system_prompt') }}">{{ old('system_prompt', $setting->system_prompt) }}</textarea>
             </div>
 
-            <label class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+            <label class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3">
                 <input type="checkbox" name="is_enabled" value="1" @checked(old('is_enabled', $setting->is_enabled))>
                 <span class="text-sm font-black text-slate-700">{{ __('roleui.ai_enable_for_safe_girl') }}</span>
             </label>

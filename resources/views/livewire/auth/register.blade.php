@@ -27,17 +27,17 @@
             @csrf
             <div class="relative">
                 <i class="fas fa-user absolute left-5 top-4 text-slate-300"></i>
-                <input type="text" name="full_name" value="{{ old('full_name') }}" placeholder="{{ __('authui.full_name_placeholder') }}" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
+                <input type="text" name="full_name" value="{{ old('full_name') }}" placeholder="{{ __('authui.full_name_placeholder') }}" required class="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
             </div>
 
             <div class="relative">
                 <i class="fas fa-envelope absolute left-5 top-4 text-slate-300"></i>
-                <input type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('authui.email_placeholder') }}" required autocomplete="email" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
+                <input type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('authui.email_placeholder') }}" required autocomplete="email" class="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
             </div>
 
             <div class="relative">
                 <i class="fas fa-phone absolute left-5 top-4 text-slate-300"></i>
-                <input type="text" name="phone" value="{{ old('phone') }}" placeholder="{{ __('authui.phone_placeholder') }}" autocomplete="tel" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
+                <input type="text" name="phone" value="{{ old('phone') }}" placeholder="{{ __('authui.phone_placeholder') }}" autocomplete="tel" class="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
             </div>
 
             <div class="relative">
@@ -46,7 +46,7 @@
                     type="text"
                     value="{{ $isOwnerRegistration ? __('authui.role_hospital_owner') : __('authui.role_patient') }}"
                     disabled
-                    class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-medium text-sm text-slate-600"
+                    class="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl outline-none font-medium text-sm text-slate-600"
                 >
                 <input type="hidden" name="role" value="{{ $isOwnerRegistration ? 'HOSPITAL_OWNER' : 'PATIENT' }}">
             </div>
@@ -54,7 +54,7 @@
             @if ($isOwnerRegistration)
                 <div class="relative">
                     <i class="fas fa-hospital absolute left-5 top-4 text-slate-300"></i>
-                    <input type="text" name="hospital_name" value="{{ old('hospital_name') }}" placeholder="{{ __('authui.hospital_name_placeholder') }}" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
+                    <input type="text" name="hospital_name" value="{{ old('hospital_name') }}" placeholder="{{ __('authui.hospital_name_placeholder') }}" required class="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
                 </div>
                 <p class="-mt-1 text-xs font-bold text-amber-700">
                     {{ __('authui.owner_pending_notice') }}
@@ -63,12 +63,12 @@
 
             <div class="relative">
                 <i class="fas fa-lock absolute left-5 top-4 text-slate-300"></i>
-                <input type="password" name="password" placeholder="{{ __('authui.password_placeholder') }}" required autocomplete="new-password" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
+                <input type="password" name="password" placeholder="{{ __('authui.password_placeholder') }}" required autocomplete="new-password" class="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
             </div>
 
             <div class="relative">
                 <i class="fas fa-lock absolute left-5 top-4 text-slate-300"></i>
-                <input type="password" name="password_confirmation" placeholder="{{ __('authui.confirm_password_label') }}" required autocomplete="new-password" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
+                <input type="password" name="password_confirmation" placeholder="{{ __('authui.confirm_password_label') }}" required autocomplete="new-password" class="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
             </div>
 
             <button type="submit" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl shadow-blue-100 hover:bg-slate-900 transition transform hover:scale-[1.02] active:scale-95" data-test="register-user-button">

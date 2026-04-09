@@ -1,7 +1,7 @@
 @php($sidebarTitle = __('roleui.owner_portal'))
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 
-@component('layouts.role-dashboard', ['title' => __('roleui.owner_dashboard'), 'sidebarTitle' => $sidebarTitle])
+@component('layouts.role-dashboard', ['title' => __('roleui.owner_profile_title'), 'sidebarTitle' => $sidebarTitle])
     @slot('sidebar')
         @include('role.owner._sidebar', ['active' => 'profile'])
     @endslot
@@ -28,65 +28,65 @@
 
             <div>
                 <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_hospital_name') }}</label>
-                <input type="text" name="name" required value="{{ old('name', $hospital?->name) }}" class="w-full rounded-2xl border border-slate-200 px-4 py-3 font-medium text-sm">
+                <input type="text" name="name" required value="{{ old('name', $hospital?->name) }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
             </div>
 
             <div>
                 <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_hospital_location') }}</label>
-                <input id="location-input" type="text" name="location" required readonly value="{{ old('location', $hospital?->location) }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-medium text-sm">
+                <input id="location-input" type="text" name="location" required readonly value="{{ old('location', $hospital?->location) }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
             </div>
 
             <div>
                 <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_address_line') }}</label>
-                <input id="address-input" type="text" name="address_line" value="{{ old('address_line', $hospital?->address_line) }}" readonly class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-medium text-sm">
+                <input id="address-input" type="text" name="address_line" value="{{ old('address_line', $hospital?->address_line) }}" readonly class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
             </div>
 
             <div class="grid gap-4 md:grid-cols-3">
                 <div>
                     <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_city') }}</label>
-                    <input id="city-input" type="text" name="city" value="{{ old('city', $hospital?->city) }}" readonly class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-medium text-sm">
+                    <input id="city-input" type="text" name="city" value="{{ old('city', $hospital?->city) }}" readonly class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
                 </div>
                 <div>
                     <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_country') }}</label>
-                    <input id="country-input" type="text" name="country" value="{{ old('country', $hospital?->country) }}" readonly class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-medium text-sm">
+                    <input id="country-input" type="text" name="country" value="{{ old('country', $hospital?->country) }}" readonly class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
                 </div>
                 <div>
                     <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_postal_code') }}</label>
-                    <input id="postcode-input" type="text" name="postal_code" value="{{ old('postal_code', $hospital?->postal_code) }}" readonly class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-medium text-sm">
+                    <input id="postcode-input" type="text" name="postal_code" value="{{ old('postal_code', $hospital?->postal_code) }}" readonly class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
                 </div>
             </div>
 
             <div>
                 <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_hospital_type') }}</label>
-                <input type="text" name="type" required value="{{ old('type', $hospital?->type) }}" class="w-full rounded-2xl border border-slate-200 px-4 py-3 font-medium text-sm">
+                <input type="text" name="type" required value="{{ old('type', $hospital?->type) }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
             </div>
 
             <div class="grid gap-4 md:grid-cols-2">
                 <div>
                 <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_phone') }}</label>
-                <input type="text" name="phone" value="{{ old('phone', auth()->user()?->phone) }}" class="w-full rounded-2xl border border-slate-200 px-4 py-3 font-medium text-sm">
+                <input type="text" name="phone" value="{{ old('phone', auth()->user()?->phone) }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
                 </div>
                 <div>
                     <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_contact_email') }}</label>
-                    <input type="email" name="contact_email" value="{{ old('contact_email', $hospital?->contact_email) }}" class="w-full rounded-2xl border border-slate-200 px-4 py-3 font-medium text-sm">
+                    <input type="email" name="contact_email" value="{{ old('contact_email', $hospital?->contact_email) }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
                 </div>
             </div>
 
             <div class="grid gap-4 md:grid-cols-2">
                 <div>
                     <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_website') }}</label>
-                    <input type="url" name="website" value="{{ old('website', $hospital?->website) }}" class="w-full rounded-2xl border border-slate-200 px-4 py-3 font-medium text-sm" placeholder="https://example.com">
+                    <input type="url" name="website" value="{{ old('website', $hospital?->website) }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm" placeholder="https://example.com">
                 </div>
                 <div>
                     <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_license_number') }}</label>
-                    <input type="text" name="license_number" value="{{ old('license_number', $hospital?->license_number) }}" class="w-full rounded-2xl border border-slate-200 px-4 py-3 font-medium text-sm">
+                    <input type="text" name="license_number" value="{{ old('license_number', $hospital?->license_number) }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">
                 </div>
             </div>
 
             <div class="rounded-2xl border border-slate-200 p-4">
                 <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_map_pick_title') }}</label>
                 <div class="mb-3 flex gap-2">
-                    <input id="osm-search" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" placeholder="{{ __('roleui.owner_map_search_placeholder') }}">
+                    <input id="osm-search" type="text" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" placeholder="{{ __('roleui.owner_map_search_placeholder') }}">
                     <button id="osm-search-btn" type="button" class="rounded-xl bg-slate-900 px-4 py-2 text-xs font-black uppercase tracking-wider text-white">{{ __('roleui.owner_map_search_button') }}</button>
                 </div>
                 <div id="owner-map" class="h-72 w-full rounded-xl border border-slate-200"></div>
@@ -94,18 +94,18 @@
                 <div class="mt-3 grid gap-3 md:grid-cols-2">
                     <div>
                         <label class="mb-1 block text-[10px] font-black uppercase tracking-wider text-slate-500">Latitude</label>
-                        <input id="lat-input" type="text" name="latitude" value="{{ old('latitude', $hospital?->latitude) }}" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                        <input id="lat-input" type="text" name="latitude" value="{{ old('latitude', $hospital?->latitude) }}" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm">
                     </div>
                     <div>
                         <label class="mb-1 block text-[10px] font-black uppercase tracking-wider text-slate-500">Longitude</label>
-                        <input id="lng-input" type="text" name="longitude" value="{{ old('longitude', $hospital?->longitude) }}" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                        <input id="lng-input" type="text" name="longitude" value="{{ old('longitude', $hospital?->longitude) }}" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm">
                     </div>
                 </div>
             </div>
 
             <div>
                 <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-500">{{ __('roleui.owner_description') }}</label>
-                <textarea name="description" rows="4" class="w-full rounded-2xl border border-slate-200 px-4 py-3 font-medium text-sm">{{ old('description', $hospital?->description) }}</textarea>
+                <textarea name="description" rows="4" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-sm">{{ old('description', $hospital?->description) }}</textarea>
             </div>
 
             <div class="flex items-center gap-3">

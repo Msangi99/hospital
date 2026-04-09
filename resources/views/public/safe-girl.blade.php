@@ -59,7 +59,7 @@
                     @auth
                         <form id="symptomForm" class="relative">
                             @csrf
-                            <textarea id="symptomInput" name="symptom_message" required placeholder="{{ __('safe_girl.input_placeholder') }}" class="w-full p-5 pr-16 bg-slate-50 border border-slate-100 rounded-[2rem] text-sm font-bold outline-none focus:border-pink-500 transition resize-none h-24 shadow-inner"></textarea>
+                            <textarea id="symptomInput" name="symptom_message" required placeholder="{{ __('safe_girl.input_placeholder') }}" class="w-full p-5 pr-16 bg-white border border-slate-100 rounded-[2rem] text-sm font-bold outline-none focus:border-pink-500 transition resize-none h-24 shadow-inner"></textarea>
                             <button type="submit" class="absolute right-3 bottom-3 w-12 h-12 bg-pink-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-slate-900 transition transform hover:scale-105 active:scale-95">
                                 <i class="fas fa-paper-plane"></i>
                             </button>

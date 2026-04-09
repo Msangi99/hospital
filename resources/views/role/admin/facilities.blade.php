@@ -61,15 +61,15 @@
                 @csrf
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.facility_name') }}</label>
-                    <input type="text" name="name" value="{{ old('name') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
+                    <input type="text" name="name" value="{{ old('name') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.facility_location') }}</label>
-                    <input type="text" name="location" value="{{ old('location') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
+                    <input type="text" name="location" value="{{ old('location') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.facility_type') }}</label>
-                    <select name="type" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
+                    <select name="type" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
                         @foreach($types as $type)
                             <option value="{{ $type }}" @selected(old('type') === $type)>{{ $type }}</option>
                         @endforeach
@@ -77,7 +77,7 @@
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.facility_status') }}</label>
-                    <select name="status" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
+                    <select name="status" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
                         @foreach($statuses as $status)
                             <option value="{{ $status }}" @selected(old('status', 'Online') === $status)>{{ $status }}</option>
                         @endforeach
@@ -85,14 +85,14 @@
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.facility_latitude') }}</label>
-                    <input type="number" step="0.0000001" name="latitude" value="{{ old('latitude') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <input type="number" step="0.0000001" name="latitude" value="{{ old('latitude') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.facility_longitude') }}</label>
-                    <input type="number" step="0.0000001" name="longitude" value="{{ old('longitude') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <input type="number" step="0.0000001" name="longitude" value="{{ old('longitude') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                 </div>
 
-                <div class="lg:col-span-12 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="lg:col-span-12 rounded-2xl border border-slate-200 bg-white p-4">
                     <label class="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-600">
                         <input id="create-facility-account" type="checkbox" name="create_account" value="1" @checked(old('create_account'))>
                         <span>{{ __('roleui.facilities_create_account') }}</span>
@@ -330,7 +330,7 @@
             var labels = @json($detailLabels);
 
             function row(label, value) {
-                return '<div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5"><div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">' + label + '</div><div class="mt-1 break-words font-semibold text-slate-800">' + (value || labels.empty) + '</div></div>';
+                return '<div class="rounded-xl border border-slate-200 bg-white px-3 py-2.5"><div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">' + label + '</div><div class="mt-1 break-words font-semibold text-slate-800">' + (value || labels.empty) + '</div></div>';
             }
 
             document.querySelectorAll('[data-view-more]').forEach(function (btn) {

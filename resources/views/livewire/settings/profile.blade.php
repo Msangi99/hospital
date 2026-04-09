@@ -1,7 +1,7 @@
 <section class="w-full max-w-2xl bg-white dark:bg-white">
     <header class="mb-10 border-b border-slate-200 pb-8">
         <h1 class="text-2xl font-black tracking-tighter text-slate-900 sm:text-3xl">
-            {{ __('Profile settings') }}
+            {{ __('roleui.sidebar_account') }}
         </h1>
         <p class="mt-2 max-w-lg text-sm font-bold leading-relaxed text-slate-500">
             {{ __('Manage your profile and account settings') }}

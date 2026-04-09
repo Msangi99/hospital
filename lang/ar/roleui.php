@@ -163,7 +163,7 @@ return [
     'owner_sidebar_schedules' => 'الجداول',
     'owner_sidebar_reports' => 'التقارير',
     'owner_sidebar_billing' => 'الفوترة',
-    'owner_sidebar_settings' => 'الإعدادات',
+    'owner_sidebar_settings' => 'تفضيلات المستشفى',
     'owner_section_workers_desc' => 'إدارة العاملين في المستشفى وتعيين الأدوار بشكل آمن.',
     'owner_section_departments_desc' => 'تنظيم أقسام المستشفى وهيكل الفرق.',
     'owner_section_services_desc' => 'إعداد قائمة الخدمات وتوفرها للمرضى.',

@@ -26,7 +26,7 @@
 
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.staff_type') }}</label>
-                <select name="staff_type" required class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500">
+                <select name="staff_type" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500">
                     <option value="MD">{{ __('roleui.staff_md') }}</option>
                     <option value="GYNO">{{ __('roleui.staff_gyno') }}</option>
                     <option value="MIDWIFE">{{ __('roleui.staff_midwife') }}</option>
@@ -38,17 +38,17 @@
 
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.specialization') }}</label>
-                <input name="specialization" value="{{ old('specialization') }}" required class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.specialization_placeholder') }}">
+                <input name="specialization" value="{{ old('specialization') }}" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.specialization_placeholder') }}">
             </div>
 
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.registration_no') }}</label>
-                <input name="registration_no" value="{{ old('registration_no') }}" required class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.registration_no_placeholder') }}">
+                <input name="registration_no" value="{{ old('registration_no') }}" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.registration_no_placeholder') }}">
             </div>
 
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.license_copy') }}</label>
-                <input type="file" name="license_copy" required class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500">
+                <input type="file" name="license_copy" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500">
             </div>
 
             <button type="submit" class="w-full rounded-2xl bg-slate-900 p-5 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-blue-600">

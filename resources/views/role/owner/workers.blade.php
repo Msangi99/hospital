@@ -39,19 +39,19 @@
                 @csrf
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('authui.name_label') }}</label>
-                    <input type="text" name="name" value="{{ old('name') }}" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <input type="text" name="name" value="{{ old('name') }}" required class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('authui.email_label') }}</label>
-                    <input type="email" name="email" value="{{ old('email') }}" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <input type="email" name="email" value="{{ old('email') }}" required class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('authui.phone_label') }}</label>
-                    <input type="text" name="phone" value="{{ old('phone') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <input type="text" name="phone" value="{{ old('phone') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.owner_worker_role') }}</label>
-                    <select name="worker_role" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <select name="worker_role" required class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                         @foreach($workerRoles as $role)
                             <option value="{{ $role }}" @selected(old('worker_role') === $role)>{{ $roleLabelMap[$role] ?? $role }}</option>
                         @endforeach
@@ -59,7 +59,7 @@
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.users_status') }}</label>
-                    <select name="status" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <select name="status" required class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                         @foreach($workerStatuses as $status)
                             <option value="{{ $status }}" @selected(old('status', 'ACTIVE') === $status)>{{ $status }}</option>
                         @endforeach
@@ -67,7 +67,7 @@
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('authui.password_label') }}</label>
-                    <input type="password" name="password" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <input type="password" name="password" required class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                 </div>
                 <div class="lg:col-span-12">
                     <button type="submit" class="rounded-2xl bg-slate-900 px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition hover:bg-slate-800">

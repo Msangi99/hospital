@@ -163,7 +163,7 @@ return [
     'owner_sidebar_schedules' => 'Ratiba',
     'owner_sidebar_reports' => 'Ripoti',
     'owner_sidebar_billing' => 'Malipo',
-    'owner_sidebar_settings' => 'Mipangilio',
+    'owner_sidebar_settings' => 'Mapendeleo ya hospitali',
     'owner_section_workers_desc' => 'Simamia wafanyakazi wa hospitali na ugawaji wa majukumu kwa usalama.',
     'owner_section_departments_desc' => 'Panga idara za hospitali na muundo wa timu.',
     'owner_section_services_desc' => 'Sanidi katalogi ya huduma na upatikanaji wake kwa wagonjwa.',

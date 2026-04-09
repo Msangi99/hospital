@@ -54,7 +54,7 @@
                                 <select
                                     name="path"
                                     required
-                                    class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500"
+                                    class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500"
                                 >
                                     @foreach ($migrationPaths as $rel)
                                         <option value="{{ $rel }}" @selected(old('path') === $rel)>{{ $rel }}</option>
@@ -101,7 +101,7 @@
                                 <select
                                     name="class"
                                     required
-                                    class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500"
+                                    class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500"
                                 >
                                     @foreach ($seederClasses as $fqcn)
                                         <option value="{{ $fqcn }}" @selected(old('class') === $fqcn)>{{ $fqcn }}</option>
@@ -129,7 +129,7 @@
                     <select
                         name="tool"
                         required
-                        class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500"
+                        class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500"
                     >
                         <option value="migrate_status">{{ __('roleui.admin_console_tool_migrate_status') }}</option>
                         <option value="optimize_clear">{{ __('roleui.admin_console_tool_optimize_clear') }}</option>

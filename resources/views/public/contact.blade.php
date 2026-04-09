@@ -55,17 +55,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block px-4">{{ __('public.contact_form_name') }}</label>
-                            <input type="text" name="name" value="{{ old('name') }}" required placeholder="John Doe" class="w-full bg-slate-50 border border-slate-100 p-5 rounded-3xl outline-none focus:border-blue-500 transition shadow-inner">
+                            <input type="text" name="name" value="{{ old('name') }}" required placeholder="John Doe" class="w-full bg-white border border-slate-100 p-5 rounded-3xl outline-none focus:border-blue-500 transition shadow-inner">
                         </div>
                         <div>
                             <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block px-4">{{ __('public.contact_form_email') }}</label>
-                            <input type="email" name="email" value="{{ old('email') }}" required placeholder="john@email.com" class="w-full bg-slate-50 border border-slate-100 p-5 rounded-3xl outline-none focus:border-blue-500 transition shadow-inner">
+                            <input type="email" name="email" value="{{ old('email') }}" required placeholder="john@email.com" class="w-full bg-white border border-slate-100 p-5 rounded-3xl outline-none focus:border-blue-500 transition shadow-inner">
                         </div>
                     </div>
 
                     <div>
                         <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block px-4">{{ __('public.contact_form_subject') }}</label>
-                        <select name="subject" class="w-full bg-slate-50 border border-slate-100 p-5 rounded-3xl outline-none focus:border-blue-500 transition shadow-inner appearance-none">
+                        <select name="subject" class="w-full bg-white border border-slate-100 p-5 rounded-3xl outline-none focus:border-blue-500 transition shadow-inner appearance-none">
                             <option value="general">{{ __('public.contact_subject_general') }}</option>
                             <option value="account">{{ __('public.contact_subject_account') }}</option>
                             <option value="bug">{{ __('public.contact_subject_bug') }}</option>
@@ -75,7 +75,7 @@
 
                     <div>
                         <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block px-4">{{ __('public.contact_form_message') }}</label>
-                        <textarea name="message" required rows="5" placeholder="{{ __('public.contact_message_placeholder') }}" class="w-full bg-slate-50 border border-slate-100 p-5 rounded-3xl outline-none focus:border-blue-500 transition shadow-inner resize-none">{{ old('message') }}</textarea>
+                        <textarea name="message" required rows="5" placeholder="{{ __('public.contact_message_placeholder') }}" class="w-full bg-white border border-slate-100 p-5 rounded-3xl outline-none focus:border-blue-500 transition shadow-inner resize-none">{{ old('message') }}</textarea>
                     </div>
 
                     <button type="submit" class="w-full bg-slate-900 text-white p-6 rounded-[2rem] font-black uppercase tracking-widest hover:bg-blue-600 transition shadow-xl transform hover:scale-[1.02] active:scale-95">

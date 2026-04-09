@@ -9,12 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Layout('layouts.settings')]
-#[Title('Profile settings')]
 class Profile extends Component
 {
     use PasswordValidationRules;
@@ -107,5 +103,14 @@ class Profile extends Component
     {
         return ! Auth::user() instanceof MustVerifyEmail
             || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
+    }
+
+    public function render()
+    {
+        $pageTitle = __('roleui.sidebar_account');
+
+        return view('livewire.settings.profile')
+            ->layout('layouts.settings')
+            ->title($pageTitle);
     }
 }

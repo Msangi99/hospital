@@ -20,7 +20,7 @@
 
             <div class="mb-6 relative">
                 <i class="fas fa-lock absolute left-5 top-4 text-slate-300"></i>
-                <input type="password" name="password" placeholder="{{ __('authui.password_placeholder') }}" required autocomplete="current-password" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm">
+                <input type="password" name="password" placeholder="{{ __('authui.password_placeholder') }}" required autocomplete="current-password" class="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm">
             </div>
 
             <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-extrabold text-xs tracking-widest uppercase hover:bg-slate-900 transition" data-test="confirm-password-button">

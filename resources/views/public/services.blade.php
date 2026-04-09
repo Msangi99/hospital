@@ -54,7 +54,7 @@
 
                     <form id="symptomForm" class="mt-auto relative">
                         <textarea id="userInput" rows="2" required
-                            class="w-full p-4 bg-slate-50 border border-slate-200 rounded-3xl text-sm outline-none focus:border-pink-500 transition resize-none pr-16"
+                            class="w-full p-4 bg-white border border-slate-200 rounded-3xl text-sm outline-none focus:border-pink-500 transition resize-none pr-16"
                             placeholder="{{ __('services.chat_placeholder') }}"></textarea>
                         <button type="submit" class="absolute right-3 bottom-3 w-10 h-10 bg-pink-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-pink-700 transition">
                             <i class="fas fa-paper-plane"></i>

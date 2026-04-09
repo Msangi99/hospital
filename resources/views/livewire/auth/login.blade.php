@@ -29,12 +29,12 @@
 
             <div class="mb-4 relative">
                 <i class="fas fa-envelope absolute left-5 top-4 text-slate-300"></i>
-                <input type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('authui.email_placeholder') }}" required autofocus autocomplete="email" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm">
+                <input type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('authui.email_placeholder') }}" required autofocus autocomplete="email" class="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm">
             </div>
 
             <div class="mb-4 relative">
                 <i class="fas fa-key absolute left-5 top-4 text-slate-300"></i>
-                <input type="password" name="password" placeholder="{{ __('authui.password_placeholder') }}" required autocomplete="current-password" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm">
+                <input type="password" name="password" placeholder="{{ __('authui.password_placeholder') }}" required autocomplete="current-password" class="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-blue-500 transition font-semibold text-sm">
             </div>
 
             <div class="flex items-center justify-between mb-4">

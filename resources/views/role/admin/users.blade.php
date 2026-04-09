@@ -81,22 +81,22 @@
                 @csrf
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('authui.name_label') }}</label>
-                    <input type="text" name="name" value="{{ old('name') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
+                    <input type="text" name="name" value="{{ old('name') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
                     @error('name')<p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p>@enderror
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('authui.email_label') }}</label>
-                    <input type="email" name="email" value="{{ old('email') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
+                    <input type="email" name="email" value="{{ old('email') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
                     @error('email')<p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p>@enderror
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('authui.phone_label') }}</label>
-                    <input type="text" name="phone" value="{{ old('phone') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <input type="text" name="phone" value="{{ old('phone') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                     @error('phone')<p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p>@enderror
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.users_role') }}</label>
-                    <select name="role" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
+                    <select name="role" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
                         @foreach($roles as $role)
                             <option value="{{ $role }}" @selected(old('role') === $role)>{{ $roleLabelMap[$role] ?? $role }}</option>
                         @endforeach
@@ -105,7 +105,7 @@
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.users_status') }}</label>
-                    <select name="status" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <select name="status" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500">
                         @foreach($statuses as $status)
                             <option value="{{ $status }}" @selected(old('status', 'ACTIVE') === $status)>{{ $status }}</option>
                         @endforeach
@@ -114,7 +114,7 @@
                 </div>
                 <div class="lg:col-span-4">
                     <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('authui.password_label') }}</label>
-                    <input type="password" name="password" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
+                    <input type="password" name="password" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-500" required>
                     @error('password')<p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p>@enderror
                 </div>
                 <div class="lg:col-span-12 flex flex-wrap items-center gap-3 pt-1">
