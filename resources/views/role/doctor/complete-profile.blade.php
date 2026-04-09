@@ -1,56 +1,59 @@
-<x-layouts.public>
-    <section class="py-16 px-6 bg-slate-50">
-        <div class="max-w-2xl mx-auto bg-white rounded-[3rem] border border-slate-100 shadow-2xl p-10">
-            <h1 class="text-3xl font-black tracking-tighter mb-2">{{ __('roleui.complete_profile_title') }}</h1>
-            <p class="text-slate-500 font-bold mb-8">{{ __('roleui.complete_profile_desc') }}</p>
+@php($sidebarTitle = __('roleui.medical_staff'))
 
-            @if (session('status'))
-                <div class="mb-6 p-4 rounded-2xl bg-green-50 border border-green-100 text-green-700 font-bold text-sm">
-                    {{ session('status') }}
-                </div>
-            @endif
+@component('layouts.role-dashboard', ['title' => __('roleui.complete_profile_title'), 'sidebarTitle' => $sidebarTitle])
+    @slot('sidebar')
+        @include('role.doctor._sidebar', ['active' => 'profile'])
+    @endslot
 
-            @if ($errors->any())
-                <div class="mb-6 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 font-bold text-sm">
-                    {{ $errors->first() }}
-                </div>
-            @endif
+    <div class="mx-auto max-w-2xl rounded-[2.5rem] border border-slate-100 bg-white p-6 shadow-xl sm:p-10">
+        <h1 class="mb-2 text-2xl font-black tracking-tighter sm:text-3xl">{{ __('roleui.complete_profile_title') }}</h1>
+        <p class="mb-8 font-bold text-slate-500">{{ __('roleui.complete_profile_desc') }}</p>
 
-            <form method="POST" action="{{ route('doctor.complete-profile.submit') }}" enctype="multipart/form-data" class="space-y-5">
-                @csrf
+        @if (session('status'))
+            <div class="mb-6 rounded-2xl border border-green-100 bg-green-50 p-4 text-sm font-bold text-green-700">
+                {{ session('status') }}
+            </div>
+        @endif
 
-                <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 px-2">{{ __('roleui.staff_type') }}</label>
-                    <select name="staff_type" required class="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-bold text-sm outline-none focus:border-blue-500 transition">
-                        <option value="MD">{{ __('roleui.staff_md') }}</option>
-                        <option value="GYNO">{{ __('roleui.staff_gyno') }}</option>
-                        <option value="MIDWIFE">{{ __('roleui.staff_midwife') }}</option>
-                        <option value="NURSE">{{ __('roleui.staff_nurse') }}</option>
-                        <option value="SPECIALIST">{{ __('roleui.staff_specialist') }}</option>
-                        <option value="AMBULANCE_STAFF">{{ __('roleui.staff_ambulance') }}</option>
-                    </select>
-                </div>
+        @if ($errors->any())
+            <div class="mb-6 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-700">
+                {{ $errors->first() }}
+            </div>
+        @endif
 
-                <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 px-2">{{ __('roleui.specialization') }}</label>
-                    <input name="specialization" value="{{ old('specialization') }}" required class="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-bold text-sm outline-none focus:border-blue-500 transition" placeholder="{{ __('roleui.specialization_placeholder') }}">
-                </div>
+        <form method="POST" action="{{ route('doctor.complete-profile.submit') }}" enctype="multipart/form-data" class="space-y-5">
+            @csrf
 
-                <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 px-2">{{ __('roleui.registration_no') }}</label>
-                    <input name="registration_no" value="{{ old('registration_no') }}" required class="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-bold text-sm outline-none focus:border-blue-500 transition" placeholder="{{ __('roleui.registration_no_placeholder') }}">
-                </div>
+            <div>
+                <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.staff_type') }}</label>
+                <select name="staff_type" required class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500">
+                    <option value="MD">{{ __('roleui.staff_md') }}</option>
+                    <option value="GYNO">{{ __('roleui.staff_gyno') }}</option>
+                    <option value="MIDWIFE">{{ __('roleui.staff_midwife') }}</option>
+                    <option value="NURSE">{{ __('roleui.staff_nurse') }}</option>
+                    <option value="SPECIALIST">{{ __('roleui.staff_specialist') }}</option>
+                    <option value="AMBULANCE_STAFF">{{ __('roleui.staff_ambulance') }}</option>
+                </select>
+            </div>
 
-                <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 px-2">{{ __('roleui.license_copy') }}</label>
-                    <input type="file" name="license_copy" required class="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-bold text-sm outline-none focus:border-blue-500 transition">
-                </div>
+            <div>
+                <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.specialization') }}</label>
+                <input name="specialization" value="{{ old('specialization') }}" required class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.specialization_placeholder') }}">
+            </div>
 
-                <button type="submit" class="w-full bg-slate-900 text-white p-5 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-600 transition">
-                    {{ __('roleui.submit_profile') }}
-                </button>
-            </form>
-        </div>
-    </section>
-</x-layouts.public>
+            <div>
+                <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.registration_no') }}</label>
+                <input name="registration_no" value="{{ old('registration_no') }}" required class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.registration_no_placeholder') }}">
+            </div>
 
+            <div>
+                <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.license_copy') }}</label>
+                <input type="file" name="license_copy" required class="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none transition focus:border-blue-500">
+            </div>
+
+            <button type="submit" class="w-full rounded-2xl bg-slate-900 p-5 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-blue-600">
+                {{ __('roleui.submit_profile') }}
+            </button>
+        </form>
+    </div>
+@endcomponent

@@ -107,6 +107,13 @@ return [
     'cta_btn_3_desc' => 'For strategic stakeholders who want to collaborate.',
     'cta_btn_3_hint' => 'Contact Us →',
 
+    'network_badge' => 'Hospitals & centers',
+    'network_title' => 'Real facilities on the network',
+    'network_subtitle' => 'Locations and coordinates come from our directory. Use your position to sort by distance.',
+    'network_use_location' => 'Use my location',
+    'network_view_all' => 'View all centers',
+    'network_distance_km' => ':distance km away',
+
     'footer_desc' => 'A digital healthcare infrastructure using API, GPRS, USSD, AI and telemedicine to connect African communities to quality healthcare services.',
     'footer_services' => 'Our Services',
     'footer_service_1' => 'Ambulance Emergency',

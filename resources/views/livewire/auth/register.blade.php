@@ -1,7 +1,14 @@
-<x-layouts::auth :title="__('authui.register_title')">
+@php
+    $registerType = $registerType ?? request()->query('type', 'patient');
+    $isOwnerRegistration = $registerType === 'owner';
+@endphp
+
+<x-layouts::auth :title="$isOwnerRegistration ? __('authui.register_owner_title') : __('authui.register_patient_title')">
     <div>
         <div class="text-center mb-8">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">{{ __('authui.register_header') }}</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">
+                {{ $isOwnerRegistration ? __('authui.register_owner_header') : __('authui.register_patient_header') }}
+            </p>
         </div>
 
         @if ($errors->any())
@@ -35,13 +42,24 @@
 
             <div class="relative">
                 <i class="fas fa-briefcase absolute left-5 top-4 text-slate-300"></i>
-                <select name="role" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm appearance-none">
-                    <option value="PATIENT" @selected(old('role') === 'PATIENT')>{{ __('authui.role_patient') }}</option>
-                    <option value="MEDICAL_TEAM" @selected(old('role') === 'MEDICAL_TEAM')>{{ __('authui.role_medical_team') }}</option>
-                    <option value="AMBULANCE" @selected(old('role') === 'AMBULANCE')>{{ __('authui.role_ambulance') }}</option>
-                    <option value="FACILITY" @selected(old('role') === 'FACILITY')>{{ __('authui.role_facility') }}</option>
-                </select>
+                <input
+                    type="text"
+                    value="{{ $isOwnerRegistration ? __('authui.role_hospital_owner') : __('authui.role_patient') }}"
+                    disabled
+                    class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-medium text-sm text-slate-600"
+                >
+                <input type="hidden" name="role" value="{{ $isOwnerRegistration ? 'HOSPITAL_OWNER' : 'PATIENT' }}">
             </div>
+
+            @if ($isOwnerRegistration)
+                <div class="relative">
+                    <i class="fas fa-hospital absolute left-5 top-4 text-slate-300"></i>
+                    <input type="text" name="hospital_name" value="{{ old('hospital_name') }}" placeholder="{{ __('authui.hospital_name_placeholder') }}" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition font-medium text-sm">
+                </div>
+                <p class="-mt-1 text-xs font-bold text-amber-700">
+                    {{ __('authui.owner_pending_notice') }}
+                </p>
+            @endif
 
             <div class="relative">
                 <i class="fas fa-lock absolute left-5 top-4 text-slate-300"></i>
@@ -60,6 +78,15 @@
 
         <p class="text-center mt-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
             {{ __('authui.already_have_account') }} <a href="{{ route('login') }}" class="text-blue-600 ml-1">{{ __('authui.login_title') }}</a>
+        </p>
+        <p class="text-center mt-3 text-xs font-bold text-slate-400 uppercase tracking-widest">
+            @if ($isOwnerRegistration)
+                {{ __('authui.register_switch_patient_prompt') }}
+                <a href="{{ route('register') }}" class="text-blue-600 ml-1">{{ __('authui.register_patient_title') }}</a>
+            @else
+                {{ __('authui.register_switch_owner_prompt') }}
+                <a href="{{ route('register.owner') }}" class="text-blue-600 ml-1">{{ __('authui.register_owner_title') }}</a>
+            @endif
         </p>
     </div>
 </x-layouts::auth>

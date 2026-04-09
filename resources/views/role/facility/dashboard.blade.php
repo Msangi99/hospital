@@ -1,9 +1,16 @@
-<x-layouts.public>
-    <section class="py-16 px-6 bg-slate-50">
-        <div class="max-w-5xl mx-auto bg-white rounded-[3rem] border border-slate-100 shadow-2xl p-10">
-            <h1 class="text-3xl font-black tracking-tighter mb-2">{{ __('roleui.facility_dashboard') }}</h1>
-            <p class="text-slate-500 font-bold">{{ __('roleui.coming_next') }}</p>
-        </div>
-    </section>
-</x-layouts.public>
+@php($sidebarTitle = __('roleui.facility_portal'))
+@php($linkActive = 'flex items-center gap-3 rounded-2xl px-4 py-3 font-black text-xs uppercase tracking-widest bg-white/10 hover:bg-white/15 transition')
 
+@component('layouts.role-dashboard', ['title' => __('roleui.facility_dashboard'), 'sidebarTitle' => $sidebarTitle])
+    @slot('sidebar')
+        <a href="{{ route('facility.dashboard') }}" class="{{ $linkActive }}">
+            <i class="fas fa-th-large w-5 text-blue-300"></i>
+            <span>{{ __('roleui.sidebar_dashboard') }}</span>
+        </a>
+    @endslot
+
+    <div class="rounded-[2.5rem] border border-slate-100 bg-white p-6 shadow-xl sm:p-10">
+        <h1 class="mb-2 text-2xl font-black tracking-tighter sm:text-3xl">{{ __('roleui.facility_dashboard') }}</h1>
+        <p class="font-bold text-slate-500">{{ __('roleui.coming_next') }}</p>
+    </div>
+@endcomponent

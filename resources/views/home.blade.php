@@ -8,6 +8,7 @@
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800,900" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
         <script src="https://cdn.tailwindcss.com"></script>
 
@@ -208,6 +209,86 @@
                 </div>
             </div>
         </section>
+
+        @if (isset($networkHospitals) && $networkHospitals->isNotEmpty())
+            <div
+                id="home-network-geo-msgs"
+                class="hidden"
+                data-geo-unsupported="{{ e(__('hospitals.geo_unsupported')) }}"
+                data-geo-denied="{{ e(__('hospitals.geo_denied')) }}"
+                data-geo-error="{{ e(__('hospitals.geo_error')) }}"
+            ></div>
+
+            <section class="border-y border-slate-100 bg-white px-4 py-16 sm:px-6 sm:py-24">
+                <div class="mx-auto max-w-7xl">
+                    <div class="mb-12 text-center">
+                        <span class="mb-5 inline-block rounded-full bg-blue-100 px-4 py-2 text-xs font-black uppercase tracking-widest text-blue-700">
+                            {{ __('home.network_badge') }}
+                        </span>
+                        <h2 class="mb-4 text-3xl font-black text-slate-900 sm:text-4xl md:text-5xl">{{ __('home.network_title') }}</h2>
+                        <p class="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg">{{ __('home.network_subtitle') }}</p>
+                        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                            <button
+                                type="button"
+                                onclick="homeNetworkUseLocation()"
+                                class="rounded-2xl bg-slate-900 px-8 py-4 text-[10px] font-black uppercase tracking-widest text-white shadow-lg transition hover:bg-blue-600"
+                            >
+                                {{ __('home.network_use_location') }}
+                            </button>
+                            <a href="{{ route('hospitals') }}" class="inline-flex items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-900 transition hover:border-blue-600">
+                                {{ __('home.network_view_all') }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach ($networkHospitals as $nh)
+                            <div class="rounded-3xl border border-slate-100 bg-slate-50 p-6 shadow-sm">
+                                <div class="mb-3 flex items-start justify-between gap-2">
+                                    <h3 class="text-lg font-black leading-snug text-slate-900">{{ $nh->name }}</h3>
+                                    <span class="shrink-0 rounded-full px-2 py-1 text-[8px] font-black uppercase tracking-widest {{ $nh->status === 'Online' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">
+                                        {{ $nh->status }}
+                                    </span>
+                                </div>
+                                <p class="mb-2 text-xs font-bold italic text-slate-500">
+                                    <i class="fas fa-map-marker-alt mr-1 text-blue-500"></i> {{ $nh->location }}
+                                </p>
+                                @if ($networkUserLat !== null && $networkUserLng !== null && $nh->getAttribute('distance_km') !== null)
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-blue-600">
+                                        {{ __('home.network_distance_km', ['distance' => number_format((float) $nh->getAttribute('distance_km'), 1)]) }}
+                                    </p>
+                                @endif
+                                <p class="mt-3 text-[10px] font-black uppercase tracking-widest text-blue-500">{{ $nh->type }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+
+            <script>
+                function homeNetworkUseLocation() {
+                    var box = document.getElementById('home-network-geo-msgs');
+                    var u = new URL(@json(route('home')));
+                    if (!navigator.geolocation) {
+                        alert(box ? box.dataset.geoUnsupported : '');
+                        return;
+                    }
+                    navigator.geolocation.getCurrentPosition(
+                        function (pos) {
+                            u.searchParams.set('lat', String(pos.coords.latitude));
+                            u.searchParams.set('lng', String(pos.coords.longitude));
+                            window.location.href = u.toString();
+                        },
+                        function (err) {
+                            var msg = box ? box.dataset.geoError : '';
+                            if (err && err.code === 1 && box) msg = box.dataset.geoDenied;
+                            alert(msg);
+                        },
+                        { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+                    );
+                }
+            </script>
+        @endif
 
         <section class="py-24 px-6 bg-white">
             <div class="max-w-7xl mx-auto">

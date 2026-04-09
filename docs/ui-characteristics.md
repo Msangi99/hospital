@@ -46,3 +46,29 @@ This file is the running inventory of UI tokens and reusable components discover
 ## Pages / topology notes
 - **Homepage topology**: Topbar → Sticky Nav → Hero (2-col) → Problem/Solution/Why (3 cards) → Features grid → How it works (3 steps) → Readiness section (dark) → CTA (3 cards) → Footer
 
+- **Admin facility management topology**: Context hero (title + KPI pills + primary action) → Collapsible create form → KPI cards (4-up) → Operations toolbar (search + column visibility) → Data table with moderation actions → Detail modal.
+
+## Migration catalog updates
+- **Pattern**: Admin management workspace shell for dense operational pages.
+- **Where seen in old**: Facility management flow in legacy admin dashboard (hospital moderation + table controls).
+- **Implemented in new**:
+  - `resources/views/role/admin/facilities.blade.php`
+  - Uses shared token families already present (`slate` neutrals, `blue/emerald/amber/rose` semantic accents, rounded 2xl/3xl surfaces).
+- **Reusable components implied**:
+  - Hero header block with action CTA.
+  - KPI stat card strip.
+  - Search + column-picker toolbar.
+  - Moderation table row action group.
+
+## Main admin UI standard
+- **Canonical reusable components**
+  - `resources/views/components/admin/hero.blade.php`
+  - `resources/views/components/admin/stat-card.blade.php`
+- **Current adopters**
+  - `resources/views/role/admin/facilities.blade.php`
+  - `resources/views/role/admin/users.blade.php`
+- **Rule for new admin pages**
+  - Use `x-admin.hero` for top context/action band.
+  - Use `x-admin.stat-card` for KPI tiles.
+  - Keep toolbar/table surfaces light (`bg-white` + `border-slate-200`) and reserve dark gradients for top-level hero emphasis.
+

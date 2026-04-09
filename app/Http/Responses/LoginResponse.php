@@ -18,6 +18,10 @@ class LoginResponse implements LoginResponseContract
             return redirect()->intended(route('admin.dashboard'));
         }
 
+        if ($role === 'HOSPITAL_OWNER') {
+            return redirect()->intended(route('owner.dashboard'));
+        }
+
         if ($role === 'MEDICAL_TEAM') {
             $hasProfile = $user->medicalProfile()->exists();
             if (! $hasProfile) {
@@ -29,6 +33,10 @@ class LoginResponse implements LoginResponseContract
 
         if ($role === 'FACILITY') {
             return redirect()->intended(route('facility.dashboard'));
+        }
+
+        if ($role === 'AMBULANCE') {
+            return redirect()->intended(route('patient.dashboard'));
         }
 
         return redirect()->intended(route('patient.dashboard'));

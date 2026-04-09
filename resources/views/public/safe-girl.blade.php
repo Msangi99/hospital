@@ -2,7 +2,6 @@
     <style>
         :root { --safe-pink: #ec4899; --safe-blue: #2563eb; }
         .safe-gradient { background: radial-gradient(circle at top right, #fff1f2, #ffffff); }
-        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); }
         .chat-box { height: 350px; overflow-y: auto; scrollbar-width: thin; scroll-behavior: smooth; }
         .chat-box::-webkit-scrollbar { width: 4px; }
         .chat-box::-webkit-scrollbar-thumb { background: #fce7f3; border-radius: 10px; }
@@ -45,12 +44,6 @@
                 </div>
 
                 <div class="p-8">
-                    @if (session('status'))
-                        <div class="mb-6 text-xs font-bold text-green-700 bg-green-50 p-4 rounded-2xl border border-green-100">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
                     <p class="text-xs font-bold text-slate-500 mb-6 italic bg-slate-50 p-4 rounded-2xl border-l-4 border-pink-500">
                         {{ __('safe_girl.chat_hint') }}
                     </p>
@@ -91,6 +84,7 @@
         const symptomForm = document.getElementById('symptomForm');
         const chatBox = document.getElementById('chatBox');
         const symptomInput = document.getElementById('symptomInput');
+        const history = [];
 
         if (symptomForm) {
             symptomForm.addEventListener('submit', async (e) => {
@@ -98,55 +92,87 @@
                 const message = symptomInput.value.trim();
                 if (!message) return;
 
-                const div = document.createElement('div');
-                div.className = "flex justify-end";
-                div.innerHTML = `
-                    <div class="bg-pink-600 p-4 rounded-3xl rounded-tr-none max-w-[85%] text-xs font-bold text-white shadow-lg">
-                        ${escapeHTML(message)}
-                        <div class="text-[8px] mt-2 opacity-70 uppercase tracking-widest">${@json(__('safe_girl.sent_to_moderator'))}</div>
-                    </div>
-                `;
-                chatBox.appendChild(div);
+                appendUserBubble(message);
+                history.push({ role: 'user', content: message });
                 symptomInput.value = '';
-                chatBox.scrollTop = chatBox.scrollHeight;
 
                 try {
-                    const response = await fetch(@json(route('safe-girl.symptoms')), {
+                    const response = await fetch(@json(route('safe-girl.ai-chat')), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': symptomForm.querySelector('input[name="_token"]').value,
                             'Accept': 'application/json',
                         },
-                        body: JSON.stringify({ symptom_message: message }),
+                        body: JSON.stringify({
+                            message,
+                            history: history.slice(-18),
+                        }),
                     });
 
                     if (!response.ok) {
-                        throw new Error('Request failed');
+                        throw new Error('request failed');
                     }
 
-                    setTimeout(() => {
-                        const reply = document.createElement('div');
-                        reply.className = "flex justify-start";
-                        reply.innerHTML = `
-                            <div class="bg-blue-50 p-4 rounded-3xl rounded-tl-none max-w-[85%] text-xs font-bold text-blue-600 border border-blue-100">
-                                <i class="fas fa-check-circle mr-1"></i> ${@json(__('safe_girl.received_reply'))}
-                            </div>
-                        `;
-                        chatBox.appendChild(reply);
-                        chatBox.scrollTop = chatBox.scrollHeight;
-                    }, 1500);
+                    const data = await response.json();
+                    const aiText = (data.assistant_message || @json(__('safe_girl.received_reply'))).toString();
+                    appendAssistantBubble(aiText, data);
+                    history.push({ role: 'assistant', content: aiText });
                 } catch (error) {
-                    // keep UI responsive; server-side will still show flash on reload
+                    appendAssistantBubble(@json(__('safe_girl.ai_error_reply')), {});
                 }
             });
         }
 
+        function appendUserBubble(message) {
+            const div = document.createElement('div');
+            div.className = 'flex justify-end';
+            div.innerHTML = `
+                <div class="bg-pink-600 p-4 rounded-3xl rounded-tr-none max-w-[85%] text-xs font-bold text-white shadow-lg">
+                    ${escapeHTML(message)}
+                </div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function appendAssistantBubble(text, data) {
+            const lines = [];
+
+            if (data.type === 'conclusion' && data.possible_condition) {
+                lines.push(`<div class="mb-2"><strong>${escapeHTML(@json(__('safe_girl.possible_condition')))}:</strong> ${escapeHTML(data.possible_condition)}</div>`);
+            }
+
+            if (data.urgency) {
+                lines.push(`<div class="mb-2"><strong>${escapeHTML(@json(__('safe_girl.urgency')))}:</strong> ${escapeHTML(data.urgency)}</div>`);
+            }
+
+            if (Array.isArray(data.advice) && data.advice.length > 0) {
+                const items = data.advice.map((x) => `<li>${escapeHTML(String(x))}</li>`).join('');
+                lines.push(`<div class="mb-2"><strong>${escapeHTML(@json(__('safe_girl.advice')))}:</strong><ul class="list-disc pl-4 mt-1 space-y-1">${items}</ul></div>`);
+            }
+
+            if (Array.isArray(data.red_flags) && data.red_flags.length > 0) {
+                const items = data.red_flags.map((x) => `<li>${escapeHTML(String(x))}</li>`).join('');
+                lines.push(`<div class="mb-2"><strong>${escapeHTML(@json(__('safe_girl.red_flags')))}:</strong><ul class="list-disc pl-4 mt-1 space-y-1">${items}</ul></div>`);
+            }
+
+            const div = document.createElement('div');
+            div.className = 'flex justify-start';
+            div.innerHTML = `
+                <div class="bg-blue-50 p-4 rounded-3xl rounded-tl-none max-w-[85%] text-xs font-bold text-blue-700 border border-blue-100">
+                    <div>${escapeHTML(text)}</div>
+                    ${lines.length ? `<div class="mt-3 text-blue-800">${lines.join('')}</div>` : ''}
+                </div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
         function escapeHTML(str) {
-            return str.replace(/[&<>"']/g, function(m) {
+            return String(str).replace(/[&<>"']/g, function (m) {
                 return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
             });
         }
     </script>
 </x-layouts.public>
-

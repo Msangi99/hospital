@@ -107,6 +107,13 @@ return [
     'cta_btn_3_desc' => 'Kwa investors, serikali, na wadau wa kimkakati wanaotaka kushirikiana.',
     'cta_btn_3_hint' => 'Contact Us →',
 
+    'network_badge' => 'Hospitali & vituo',
+    'network_title' => 'Vituo halisi kwenye mtandao',
+    'network_subtitle' => 'Mahali na kuratibu zinatoka kwenye orodha yetu. Tumia eneo lako kupanga kwa umbali.',
+    'network_use_location' => 'Tumia eneo langu',
+    'network_view_all' => 'Ona vituo vyote',
+    'network_distance_km' => 'Km :distance mbali',
+
     'footer_desc' => 'Miundombinu ya afya ya kidigitali inayotumia API, GPRS, USSD, AI na telemedicine kuunganisha jamii za Afrika na huduma bora za afya.',
     'footer_services' => 'Huduma Zetu',
     'footer_service_1' => 'Dharura ya Ambulance',

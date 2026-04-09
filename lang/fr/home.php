@@ -107,6 +107,13 @@ return [
     'cta_btn_3_desc' => 'Pour les acteurs stratégiques souhaitant collaborer.',
     'cta_btn_3_hint' => 'Nous contacter →',
 
+    'network_badge' => 'Hôpitaux & centres',
+    'network_title' => 'Établissements réels sur le réseau',
+    'network_subtitle' => 'Les lieux et coordonnées viennent de notre annuaire. Utilisez votre position pour trier par distance.',
+    'network_use_location' => 'Utiliser ma position',
+    'network_view_all' => 'Voir tous les centres',
+    'network_distance_km' => 'À :distance km',
+
     'footer_desc' => 'Infrastructure de santé numérique utilisant API, GPRS, USSD, IA et télémédecine pour connecter les communautés africaines à des soins de qualité.',
     'footer_services' => 'Nos services',
     'footer_service_1' => 'Urgence ambulance',

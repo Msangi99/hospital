@@ -4,7 +4,7 @@ use App\Http\Controllers\PublicPagesController;
 use App\Http\Controllers\RolePagesController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'home')->name('home');
+Route::get('/', [PublicPagesController::class, 'home'])->name('home');
 
 Route::get('/about', [PublicPagesController::class, 'about'])->name('about');
 Route::get('/services', [PublicPagesController::class, 'services'])->name('services');
@@ -25,7 +25,16 @@ Route::get('/video-consult', [PublicPagesController::class, 'videoConsult'])
 Route::post('/safe-girl/symptoms', [PublicPagesController::class, 'safeGirlSymptomSubmit'])
     ->middleware(['auth'])
     ->name('safe-girl.symptoms');
+Route::post('/safe-girl/ai-chat', [PublicPagesController::class, 'safeGirlAiChat'])
+    ->middleware(['auth'])
+    ->name('safe-girl.ai-chat');
 Route::post('/subscribe', [PublicPagesController::class, 'subscribe'])->name('subscribe');
+
+Route::middleware(['guest'])->group(function () {
+    Route::get('/register/hospital-owner', function () {
+        return view('livewire.auth.register', ['registerType' => 'owner']);
+    })->name('register.owner');
+});
 
 Route::post('/locale', function () {
     $locale = (string) request('locale', '');
@@ -49,6 +58,10 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->route('admin.dashboard');
         }
 
+        if ($role === 'HOSPITAL_OWNER') {
+            return redirect()->route('owner.dashboard');
+        }
+
         if ($role === 'MEDICAL_TEAM') {
             return redirect()->route('doctor.dashboard');
         }
@@ -65,6 +78,85 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [RolePagesController::class, 'adminDashboard'])
         ->middleware(['role:SUPERADMIN'])
         ->name('admin.dashboard');
+    Route::get('/admin/emergencies', [RolePagesController::class, 'adminEmergencies'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.emergencies');
+    Route::get('/admin/newsletter', [RolePagesController::class, 'adminNewsletter'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.newsletter');
+    Route::get('/admin/alerts', [RolePagesController::class, 'adminAlerts'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.alerts');
+    Route::get('/admin/ai', [RolePagesController::class, 'adminAiSettings'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.ai-settings');
+    Route::post('/admin/ai', [RolePagesController::class, 'adminAiSettingsUpdate'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.ai-settings.update');
+    Route::post('/admin/ai/models', [RolePagesController::class, 'adminAiModelsFetch'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.ai-settings.models');
+    Route::get('/admin/users', [RolePagesController::class, 'adminUsers'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.users');
+    Route::post('/admin/users', [RolePagesController::class, 'adminUsersStore'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.users.store');
+    Route::get('/admin/facilities', [RolePagesController::class, 'adminFacilities'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.facilities');
+    Route::post('/admin/facilities', [RolePagesController::class, 'adminFacilitiesStore'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.facilities.store');
+    Route::post('/admin/facilities/{hospital}/moderate', [RolePagesController::class, 'adminFacilitiesModerate'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.facilities.moderate');
+    Route::get('/admin/analytics', [RolePagesController::class, 'adminAnalytics'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.analytics');
+    Route::get('/admin/audit-logs', [RolePagesController::class, 'adminAuditLogs'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.audit-logs');
+    Route::get('/admin/billing-integrations', [RolePagesController::class, 'adminBillingIntegrations'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.billing-integrations');
+
+    Route::get('/owner', [RolePagesController::class, 'hospitalOwnerDashboard'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->name('owner.dashboard');
+    Route::post('/owner/profile', [RolePagesController::class, 'hospitalOwnerProfileUpdate'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->name('owner.profile.update');
+    Route::get('/owner/workers', [RolePagesController::class, 'hospitalOwnerWorkers'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->name('owner.workers');
+    Route::post('/owner/workers', [RolePagesController::class, 'hospitalOwnerWorkersStore'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->name('owner.workers.store');
+    Route::get('/owner/departments', [RolePagesController::class, 'hospitalOwnerSection'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->defaults('section', 'departments')
+        ->name('owner.departments');
+    Route::get('/owner/services', [RolePagesController::class, 'hospitalOwnerSection'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->defaults('section', 'services')
+        ->name('owner.services');
+    Route::get('/owner/schedules', [RolePagesController::class, 'hospitalOwnerSection'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->defaults('section', 'schedules')
+        ->name('owner.schedules');
+    Route::get('/owner/reports', [RolePagesController::class, 'hospitalOwnerSection'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->defaults('section', 'reports')
+        ->name('owner.reports');
+    Route::get('/owner/billing', [RolePagesController::class, 'hospitalOwnerSection'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->defaults('section', 'billing')
+        ->name('owner.billing');
+    Route::get('/owner/settings', [RolePagesController::class, 'hospitalOwnerSection'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->defaults('section', 'settings')
+        ->name('owner.settings');
 
     Route::get('/doctor', [RolePagesController::class, 'doctorDashboard'])
         ->middleware(['role:MEDICAL_TEAM'])

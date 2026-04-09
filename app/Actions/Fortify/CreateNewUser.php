@@ -3,7 +3,9 @@
 namespace App\Actions\Fortify;
 
 use App\Concerns\PasswordValidationRules;
+use App\Models\Hospital;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -18,31 +20,45 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+        $role = (string) ($input['role'] ?? 'PATIENT');
+        if (! in_array($role, ['PATIENT', 'HOSPITAL_OWNER'], true)) {
+            $role = 'PATIENT';
+        }
+
         Validator::make($input, [
             'full_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:50'],
-            'role' => ['required', 'string', 'in:PATIENT,MEDICAL_TEAM,AMBULANCE,FACILITY'],
+            'role' => ['nullable', 'string', 'in:PATIENT,HOSPITAL_OWNER'],
+            'hospital_name' => ['nullable', 'required_if:role,HOSPITAL_OWNER', 'string', 'max:255'],
             'password' => $this->passwordRules(),
         ])->validate();
 
         $email = (string) $input['email'];
-        $role = (string) $input['role'];
 
-        // Legacy parity: old system escalated this specific email to SUPERADMIN.
-        // Keep this controlled by env so it can be disabled in production.
-        $legacyAdminEmail = (string) env('LEGACY_SUPERADMIN_EMAIL', 'admin@semanami.com');
-        if ($legacyAdminEmail !== '' && strcasecmp($email, $legacyAdminEmail) === 0) {
-            $role = 'SUPERADMIN';
-        }
+        return DB::transaction(function () use ($input, $email, $role) {
+            $user = User::create([
+                'name' => $input['full_name'],
+                'full_name' => $input['full_name'],
+                'email' => $email,
+                'phone' => $input['phone'] ?? null,
+                'role' => $role,
+                'status' => $role === 'HOSPITAL_OWNER' ? 'PENDING' : 'ACTIVE',
+                'password' => $input['password'],
+            ]);
 
-        return User::create([
-            'name' => $input['full_name'],
-            'full_name' => $input['full_name'],
-            'email' => $email,
-            'phone' => $input['phone'] ?? null,
-            'role' => $role,
-            'password' => $input['password'],
-        ]);
+            if ($role === 'HOSPITAL_OWNER') {
+                Hospital::query()->create([
+                    'owner_user_id' => $user->id,
+                    'name' => (string) $input['hospital_name'],
+                    'location' => 'Pending update',
+                    'type' => 'Hospital',
+                    'status' => 'Offline',
+                    'verification_status' => 'PENDING',
+                ]);
+            }
+
+            return $user;
+        });
     }
 }
