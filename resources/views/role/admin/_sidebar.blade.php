@@ -42,3 +42,7 @@
     <i class="fas fa-brain w-5 text-blue-300"></i>
     <span>{{ __('roleui.sidebar_ai_settings') }}</span>
 </a>
+<a href="{{ route('admin.console') }}" class="{{ $active === 'console' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-terminal w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_console') }}</span>
+</a>

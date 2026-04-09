@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminConsoleController;
 use App\Http\Controllers\PublicPagesController;
 use App\Http\Controllers\RolePagesController;
 use Illuminate\Support\Facades\Route;
@@ -120,6 +121,25 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/billing-integrations', [RolePagesController::class, 'adminBillingIntegrations'])
         ->middleware(['role:SUPERADMIN'])
         ->name('admin.billing-integrations');
+
+    Route::get('/admin/console', [AdminConsoleController::class, 'index'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.console');
+    Route::post('/admin/console/migrate', [AdminConsoleController::class, 'migrate'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.console.migrate');
+    Route::post('/admin/console/migrate-path', [AdminConsoleController::class, 'migratePath'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.console.migrate-path');
+    Route::post('/admin/console/seed', [AdminConsoleController::class, 'seedAll'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.console.seed');
+    Route::post('/admin/console/seed-class', [AdminConsoleController::class, 'seedClass'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.console.seed-class');
+    Route::post('/admin/console/tool', [AdminConsoleController::class, 'tool'])
+        ->middleware(['role:SUPERADMIN'])
+        ->name('admin.console.tool');
 
     Route::get('/owner', [RolePagesController::class, 'hospitalOwnerDashboard'])
         ->middleware(['role:HOSPITAL_OWNER'])

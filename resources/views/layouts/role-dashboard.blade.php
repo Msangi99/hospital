@@ -57,7 +57,14 @@
                     {{ $sidebar ?? '' }}
                 </nav>
 
-                <div class="mt-auto border-t border-white/10 p-4">
+                <div class="mt-auto space-y-2 border-t border-white/10 p-4">
+                    <a
+                        href="{{ route('profile.edit') }}"
+                        class="flex w-full items-center justify-center gap-3 rounded-2xl bg-white/5 px-4 py-3 text-xs font-black uppercase tracking-widest text-white transition hover:bg-white/10"
+                    >
+                        <i class="fas fa-user-cog" aria-hidden="true"></i>
+                        <span>{{ __('roleui.sidebar_account') }}</span>
+                    </a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="flex w-full items-center justify-center gap-3 rounded-2xl bg-white/5 px-4 py-3 text-xs font-black uppercase tracking-widest transition hover:bg-white/10">
@@ -96,7 +103,11 @@
                         </div>
 
                         <div class="flex shrink-0 items-center gap-2 sm:gap-3">
-                            <div class="hidden items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 sm:flex">
+                            <a
+                                href="{{ route('profile.edit') }}"
+                                class="hidden items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 transition hover:border-blue-200 hover:bg-blue-50/80 sm:flex"
+                                title="{{ __('roleui.sidebar_account') }}"
+                            >
                                 <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-xs font-black text-white">
                                     {{ auth()->user()?->initials() }}
                                 </div>
@@ -107,7 +118,7 @@
                                         <div class="truncate text-[10px] font-black uppercase tracking-widest text-blue-500">{{ $hospitalName }}</div>
                                     @endif
                                 </div>
-                            </div>
+                            </a>
                             <a href="{{ route('home') }}" class="whitespace-nowrap text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-600 sm:text-xs">
                                 {{ __('roleui.back_home') }}
                             </a>
