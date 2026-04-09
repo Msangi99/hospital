@@ -1,4 +1,4 @@
-<section class="w-full">
+<section class="w-full rounded-[2.5rem] border border-slate-100 bg-white p-6 shadow-xl sm:p-10">
     <style>
         /* Tailwind CDN has no Flux theme CSS variables; primary Flux buttons can lose their background. */
         /* Match name/email in dark mode and tame Chrome autofill on email. */

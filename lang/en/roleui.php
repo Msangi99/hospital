@@ -16,8 +16,6 @@ return [
     'sidebar_patients' => 'Patients',
     'sidebar_logout' => 'Logout',
     'sidebar_account' => 'Account settings',
-    'settings_brand_a' => 'Medica',
-    'settings_brand_b' => 'Doctor',
     'sidebar_complete_profile' => 'Complete profile',
     'open_menu' => 'Open menu',
     'close_menu' => 'Close menu',

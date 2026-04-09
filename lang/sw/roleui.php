@@ -16,8 +16,6 @@ return [
     'sidebar_patients' => 'Wagonjwa',
     'sidebar_logout' => 'Logout',
     'sidebar_account' => 'Mipangilio ya akaunti',
-    'settings_brand_a' => 'Medica',
-    'settings_brand_b' => 'Doctor',
     'sidebar_complete_profile' => 'Kamilisha wasifu',
     'open_menu' => 'Fungua menyu',
     'close_menu' => 'Funga menyu',
