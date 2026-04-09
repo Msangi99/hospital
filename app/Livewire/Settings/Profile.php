@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Settings;
 
+use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -15,11 +17,18 @@ use Livewire\Component;
 #[Title('Profile settings')]
 class Profile extends Component
 {
+    use PasswordValidationRules;
     use ProfileValidationRules;
 
     public string $name = '';
 
     public string $email = '';
+
+    public string $current_password = '';
+
+    public string $password = '';
+
+    public string $password_confirmation = '';
 
     /**
      * Mount the component.
@@ -48,6 +57,25 @@ class Profile extends Component
         $user->save();
 
         $this->dispatch('profile-updated', name: $user->name);
+    }
+
+    /**
+     * Update the signed-in user's password.
+     */
+    public function updatePassword(): void
+    {
+        $this->validate([
+            'current_password' => $this->currentPasswordRules(),
+            'password' => $this->passwordRules(),
+        ]);
+
+        Auth::user()->forceFill([
+            'password' => Hash::make($this->password),
+        ])->save();
+
+        $this->reset('current_password', 'password', 'password_confirmation');
+
+        $this->dispatch('password-updated');
     }
 
     /**

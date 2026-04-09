@@ -13,6 +13,22 @@ class DeleteUserForm extends Component
 
     public string $password = '';
 
+    public bool $confirmingDeletion = false;
+
+    public function startConfirmingDeletion(): void
+    {
+        $this->confirmingDeletion = true;
+        $this->resetErrorBag();
+        $this->password = '';
+    }
+
+    public function cancelDeletion(): void
+    {
+        $this->confirmingDeletion = false;
+        $this->password = '';
+        $this->resetErrorBag();
+    }
+
     /**
      * Delete the currently authenticated user.
      */

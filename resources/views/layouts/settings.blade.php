@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-white">
     <head>
         @include('partials.head')
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -33,9 +33,10 @@
         $linkInactive = 'flex items-center gap-3 rounded-2xl px-4 py-3 font-black text-xs uppercase tracking-widest text-slate-300 hover:text-white hover:bg-white/10 transition';
         $linkActive = 'flex items-center gap-3 rounded-2xl px-4 py-3 font-black text-xs uppercase tracking-widest bg-white/10 text-white hover:bg-white/15 transition';
         $headerTitle = $title ?? __('Settings');
+        $roleNavActive = '_settings_context_';
     @endphp
-    <body class="h-screen overflow-hidden bg-white text-slate-900">
-        <div class="h-screen flex overflow-hidden">
+    <body class="h-screen overflow-hidden bg-white text-slate-900 dark:bg-white dark:text-slate-900">
+        <div class="flex h-screen min-h-0 overflow-hidden bg-white dark:bg-white">
             <div
                 id="settings-sidebar-backdrop"
                 class="fixed inset-0 z-40 bg-slate-950/60 opacity-0 pointer-events-none transition-opacity duration-200 lg:hidden"
@@ -44,8 +45,8 @@
 
             <aside
                 id="settings-sidebar"
-                class="fixed inset-y-0 left-0 z-50 flex h-screen w-72 max-w-[min(18rem,88vw)] flex-col border-r border-slate-900 bg-slate-950 text-white transition-transform duration-200 ease-out -translate-x-full max-lg:[&.is-open]:translate-x-0 lg:sticky lg:top-0 lg:z-auto lg:max-w-none lg:translate-x-0"
-                aria-label="{{ __('Settings') }}"
+                class="fixed inset-y-0 left-0 z-50 flex h-screen min-h-0 w-72 max-w-[min(18rem,88vw)] flex-col border-r border-slate-900 bg-slate-950 text-white transition-transform duration-200 ease-out -translate-x-full max-lg:[&.is-open]:translate-x-0 lg:sticky lg:top-0 lg:z-auto lg:max-w-none lg:translate-x-0"
+                aria-label="{{ __('roleui.main_navigation') }}"
             >
                 <div class="flex items-start justify-between gap-3 border-b border-white/10 px-6 py-6 lg:block">
                     <div class="min-w-0">
@@ -66,30 +67,49 @@
                     </button>
                 </div>
 
-                <nav class="flex-1 space-y-2 overflow-y-auto p-4">
-                    <a href="{{ route('dashboard') }}" class="{{ $linkInactive }}">
-                        <i class="fas fa-th-large w-5 text-blue-300"></i>
-                        <span>{{ __('roleui.back_to_dashboard') }}</span>
-                    </a>
-                    <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? $linkActive : $linkInactive }}">
-                        <i class="fas fa-user w-5 text-blue-300"></i>
-                        <span>{{ __('Profile') }}</span>
-                    </a>
-                    @if (Route::has('security.edit'))
-                        <a href="{{ route('security.edit') }}" class="{{ request()->routeIs('security.edit') ? $linkActive : $linkInactive }}">
-                            <i class="fas fa-lock w-5 text-blue-300"></i>
-                            <span>{{ __('Security') }}</span>
-                        </a>
-                    @endif
-                    @if (Route::has('appearance.edit'))
-                        <a href="{{ route('appearance.edit') }}" class="{{ request()->routeIs('appearance.edit') ? $linkActive : $linkInactive }}">
-                            <i class="fas fa-palette w-5 text-blue-300"></i>
-                            <span>{{ __('Appearance') }}</span>
-                        </a>
-                    @endif
+                <nav class="min-h-0 flex-1 space-y-2 overflow-y-auto overflow-x-hidden p-4 pb-2">
+                    <div class="border-b border-white/10 pb-4">
+                        <p class="mb-2 px-1 text-[10px] font-black uppercase tracking-[0.35em] text-slate-500">
+                            {{ __('roleui.main_navigation') }}
+                        </p>
+                        <div class="space-y-2">
+                            @switch((string) ($currentUser->role ?? ''))
+                                @case('SUPERADMIN')
+                                    @include('role.admin._sidebar', ['active' => $roleNavActive])
+                                    @break
+                                @case('MEDICAL_TEAM')
+                                    @include('role.doctor._sidebar', ['active' => $roleNavActive])
+                                    @break
+                                @case('HOSPITAL_OWNER')
+                                    @include('role.owner._sidebar', ['active' => ''])
+                                    @break
+                                @case('FACILITY')
+                                    @include('settings.sidebars.facility')
+                                    @break
+                                @case('PATIENT')
+                                @case('AMBULANCE')
+                                    @include('settings.sidebars.patient')
+                                    @break
+                                @default
+                                    @include('settings.sidebars.patient')
+                            @endswitch
+                        </div>
+                    </div>
                 </nav>
 
-                <div class="mt-auto border-t border-white/10 p-4">
+                <div class="shrink-0 border-t border-white/10 p-4 pt-3">
+                    <p class="mb-2 px-1 text-[10px] font-black uppercase tracking-[0.35em] text-slate-500">
+                        {{ __('roleui.sidebar_account') }}
+                    </p>
+                    <div class="space-y-2">
+                        <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? $linkActive : $linkInactive }}">
+                            <i class="fas fa-user w-5 text-blue-300"></i>
+                            <span>{{ __('Profile') }}</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="shrink-0 border-t border-white/10 p-4 pt-2">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="flex w-full items-center justify-center gap-3 rounded-2xl bg-white/5 px-4 py-3 text-xs font-black uppercase tracking-widest transition hover:bg-white/10">
@@ -100,8 +120,8 @@
                 </div>
             </aside>
 
-            <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
-                <header class="sticky top-0 z-30 border-b border-slate-100 bg-white/90 backdrop-blur">
+            <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white dark:bg-white">
+                <header class="sticky top-0 z-30 border-b border-slate-100 bg-white dark:bg-white">
                     <div class="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
                         <div class="flex min-w-0 items-center gap-2 sm:gap-3">
                             <button
@@ -151,7 +171,7 @@
                     </div>
                 </header>
 
-                <main class="mx-auto w-full max-w-[1440px] flex-1 overflow-y-auto bg-white px-4 py-6 sm:px-6 sm:py-8">
+                <main class="mx-auto min-h-0 w-full max-w-[1440px] flex-1 overflow-y-auto bg-white px-4 py-6 sm:px-6 sm:py-8 dark:bg-white">
                     {{ $slot }}
                 </main>
             </div>

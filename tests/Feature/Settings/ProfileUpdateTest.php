@@ -2,6 +2,7 @@
 
 use App\Livewire\Settings\Profile;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 
 test('profile page is displayed', function () {
@@ -27,6 +28,44 @@ test('profile information can be updated', function () {
     expect($user->name)->toEqual('Test User');
     expect($user->email)->toEqual('test@example.com');
     expect($user->email_verified_at)->toBeNull();
+});
+
+test('password can be updated from profile settings', function () {
+    $user = User::factory()->create([
+        'password' => Hash::make('password'),
+    ]);
+
+    $this->actingAs($user);
+
+    $newPassword = 'New-Secure-Pass-9!';
+
+    $response = Livewire::test(Profile::class)
+        ->set('current_password', 'password')
+        ->set('password', $newPassword)
+        ->set('password_confirmation', $newPassword)
+        ->call('updatePassword');
+
+    $response->assertHasNoErrors();
+
+    expect(Hash::check($newPassword, $user->fresh()->password))->toBeTrue();
+});
+
+test('wrong current password is rejected when updating password', function () {
+    $user = User::factory()->create([
+        'password' => Hash::make('password'),
+    ]);
+
+    $this->actingAs($user);
+
+    $response = Livewire::test(Profile::class)
+        ->set('current_password', 'wrong-password')
+        ->set('password', 'New-Secure-Pass-9!')
+        ->set('password_confirmation', 'New-Secure-Pass-9!')
+        ->call('updatePassword');
+
+    $response->assertHasErrors(['current_password']);
+
+    expect(Hash::check('password', $user->fresh()->password))->toBeTrue();
 });
 
 test('email verification status is unchanged when email address is unchanged', function () {
