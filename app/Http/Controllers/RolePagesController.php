@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AiSetting;
+use App\Models\Appointment;
 use App\Models\ContactMessage;
 use App\Models\Hospital;
 use App\Models\HospitalWorkerMembership;
@@ -11,6 +12,7 @@ use App\Models\NewsletterSubscriber;
 use App\Models\SafeGirlSymptom;
 use App\Models\SosRequest;
 use App\Models\User;
+use App\Models\VideoSession;
 use App\Services\AiProviderModelsListService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -653,22 +655,190 @@ class RolePagesController extends Controller
 
     public function doctorDashboard(): View
     {
-        return view('role.doctor.dashboard');
+        /** @var User $doctor */
+        $doctor = request()->user();
+        $today = now()->toDateString();
+
+        $profile = MedicalProfile::query()
+            ->where('user_id', $doctor->id)
+            ->first();
+
+        $todayAppointments = Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->where('appointment_date', $today)
+            ->count();
+
+        $upcomingAppointments = Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->where('appointment_date', '>=', $today)
+            ->count();
+
+        $activeVideoSessions = VideoSession::query()
+            ->where('doctor_id', $doctor->id)
+            ->whereNull('end_time')
+            ->count();
+
+        $totalPatients = Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->distinct('patient_id')
+            ->count('patient_id');
+
+        $nextAppointments = Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->where('appointment_date', '>=', $today)
+            ->orderBy('appointment_date')
+            ->orderBy('appointment_time')
+            ->limit(8)
+            ->get();
+
+        $patientNames = User::query()
+            ->whereIn('id', $nextAppointments->pluck('patient_id')->filter()->values())
+            ->pluck('name', 'id');
+
+        $videoRequests = VideoSession::query()
+            ->where('doctor_id', $doctor->id)
+            ->whereNull('end_time')
+            ->latest('id')
+            ->limit(5)
+            ->get(['id', 'patient_id', 'room_id', 'start_time']);
+
+        $videoPatientNames = User::query()
+            ->whereIn('id', $videoRequests->pluck('patient_id')->filter()->values())
+            ->pluck('name', 'id');
+
+        return view('role.doctor.dashboard', [
+            'profile' => $profile,
+            'stats' => [
+                'today_appointments' => $todayAppointments,
+                'upcoming_appointments' => $upcomingAppointments,
+                'active_video_sessions' => $activeVideoSessions,
+                'patients' => $totalPatients,
+            ],
+            'nextAppointments' => $nextAppointments,
+            'patientNames' => $patientNames,
+            'videoRequests' => $videoRequests,
+            'videoPatientNames' => $videoPatientNames,
+        ]);
     }
 
     public function doctorAppointments(): View
     {
-        return view('role.doctor.appointments');
+        /** @var User $doctor */
+        $doctor = request()->user();
+        $today = now()->toDateString();
+
+        $appointments = Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->orderByDesc('appointment_date')
+            ->orderByDesc('appointment_time')
+            ->limit(200)
+            ->get();
+
+        $patients = User::query()
+            ->where('role', 'PATIENT')
+            ->where('status', 'ACTIVE')
+            ->orderBy('name')
+            ->select(['id', 'name', 'email', 'phone'])
+            ->limit(500)
+            ->get();
+
+        $patientNames = User::query()
+            ->whereIn('id', $appointments->pluck('patient_id')->filter()->values())
+            ->pluck('name', 'id');
+
+        return view('role.doctor.appointments', [
+            'appointments' => $appointments,
+            'patients' => $patients,
+            'patientNames' => $patientNames,
+            'today' => $today,
+        ]);
+    }
+
+    public function doctorAppointmentsStore(Request $request): RedirectResponse
+    {
+        /** @var User $doctor */
+        $doctor = $request->user();
+
+        $data = $request->validate([
+            'patient_id' => ['required', 'integer', 'exists:users,id'],
+            'appointment_date' => ['required', 'date'],
+            'appointment_time' => ['required', 'date_format:H:i'],
+            'reason' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $patient = User::query()->findOrFail((int) $data['patient_id']);
+        abort_unless((string) $patient->role === 'PATIENT', 422, 'Selected user is not a patient.');
+
+        Appointment::query()->create([
+            'patient_id' => (int) $data['patient_id'],
+            'doctor_id' => (int) $doctor->id,
+            'appointment_date' => (string) $data['appointment_date'],
+            'appointment_time' => (string) $data['appointment_time'],
+            'reason' => ($data['reason'] ?? null) ?: null,
+            'status' => 'PENDING',
+            'created_at' => now(),
+        ]);
+
+        return redirect()
+            ->route('doctor.appointments')
+            ->with('status', 'Appointment created successfully.');
     }
 
     public function doctorPatients(): View
     {
-        return view('role.doctor.patients');
+        /** @var User $doctor */
+        $doctor = request()->user();
+
+        $patientIds = Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->pluck('patient_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $patients = User::query()
+            ->whereIn('id', $patientIds)
+            ->select(['id', 'name', 'email', 'phone', 'status', 'created_at'])
+            ->orderBy('name')
+            ->get();
+
+        $appointmentCounts = Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->selectRaw('patient_id, COUNT(*) as total')
+            ->groupBy('patient_id')
+            ->pluck('total', 'patient_id');
+
+        $lastSeen = Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->orderByDesc('appointment_date')
+            ->orderByDesc('appointment_time')
+            ->get(['patient_id', 'appointment_date', 'appointment_time'])
+            ->groupBy('patient_id')
+            ->map(function ($rows) {
+                $row = $rows->first();
+                if (! $row) {
+                    return null;
+                }
+
+                return trim((string) $row->appointment_date.' '.(string) $row->appointment_time);
+            });
+
+        return view('role.doctor.patients', [
+            'patients' => $patients,
+            'appointmentCounts' => $appointmentCounts,
+            'lastSeen' => $lastSeen,
+        ]);
     }
 
     public function doctorCompleteProfile(): View
     {
-        return view('role.doctor.complete-profile');
+        /** @var User $doctor */
+        $doctor = request()->user();
+        $profile = MedicalProfile::query()->where('user_id', $doctor->id)->first();
+
+        return view('role.doctor.complete-profile', [
+            'profile' => $profile,
+        ]);
     }
 
     public function doctorCompleteProfileSubmit(Request $request): RedirectResponse
@@ -677,10 +847,15 @@ class RolePagesController extends Controller
             'staff_type' => ['required', 'string', 'max:50'],
             'specialization' => ['required', 'string', 'max:255'],
             'registration_no' => ['required', 'string', 'max:100'],
-            'license_copy' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'license_copy' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
         ]);
 
-        $path = $request->file('license_copy')->store('licenses', 'public');
+        $existing = MedicalProfile::query()->where('user_id', $request->user()->id)->first();
+
+        $path = $existing?->license_copy;
+        if ($request->hasFile('license_copy')) {
+            $path = $request->file('license_copy')->store('licenses', 'public');
+        }
 
         MedicalProfile::query()->updateOrCreate(
             ['user_id' => $request->user()->id],
@@ -688,10 +863,10 @@ class RolePagesController extends Controller
                 'staff_type' => $data['staff_type'],
                 'specialization' => $data['specialization'],
                 'registration_no' => $data['registration_no'],
-                'license_copy' => $path,
+                'license_copy' => (string) $path,
                 'verification_status' => 'PENDING',
                 'status' => 'PENDING',
-                'created_at' => now(),
+                'created_at' => $existing?->created_at ?? now(),
                 'updated_at' => now(),
             ],
         );

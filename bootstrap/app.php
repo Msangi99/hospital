@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
+            'admin.mfa' => \App\Http\Middleware\EnsureSuperAdminMfa::class,
+            'admin.ip' => \App\Http\Middleware\EnsureAdminIpAllowlist::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

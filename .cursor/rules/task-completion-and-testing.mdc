@@ -1,0 +1,21 @@
+---
+description: Always finish all requested tasks and validate outcomes before marking work complete
+alwaysApply: true
+---
+
+# Task Completion And Verification
+
+- Treat every user request as an end-to-end delivery, not a partial attempt.
+- Complete all requested items, including full TODO lists, before declaring completion.
+- Do not leave tasks half-done because of volume; if there are many tasks, continue until all are finished.
+- Verify results with appropriate checks (tests, lint, build, or direct validation) for each relevant change.
+- Report completion only after verification passes, and clearly note what was validated.
+- If a blocker prevents completion, explain the blocker and provide the exact next action required.
+
+## Execution Standard
+
+- Plan work to cover 100% of requested tasks.
+- Implement all tasks.
+- Run validation and fix issues found.
+- Re-check until results are stable.
+- Only then provide a final "done" update.

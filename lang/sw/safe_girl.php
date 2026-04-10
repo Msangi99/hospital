@@ -23,6 +23,7 @@ return [
     'protected' => 'Protected',
     'sent_to_moderator' => 'Imetumwa kwa Moderator',
     'received_reply' => 'Imepokelewa. Msaidizi anachambua ujumbe wako.',
+    'typing_indicator_a11y' => 'Msaidizi anaandika jibu',
     'safe_girl_symptom_received' => 'Ujumbe wako umepokelewa.',
 
     'possible_condition' => 'Hali inayowezekana',

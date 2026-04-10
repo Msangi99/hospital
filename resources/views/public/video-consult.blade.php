@@ -9,6 +9,13 @@
         }
     </style>
 
+    <div class="fixed left-1/2 top-6 z-50 -translate-x-1/2">
+        <div class="rounded-2xl border border-blue-100 bg-white/95 px-6 py-3 text-center shadow-xl backdrop-blur">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Video Alert</p>
+            <p class="mt-1 text-sm font-bold text-slate-700">{{ $videoAlert ?? 'Video room ready.' }}</p>
+        </div>
+    </div>
+
     <main class="max-w-7xl mx-auto py-12 px-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
             <div class="lg:col-span-8 space-y-8">
@@ -38,8 +45,8 @@
                     <div class="w-24 h-24 rounded-[2rem] mx-auto mb-6 border-4 border-white shadow-xl status-online overflow-hidden">
                         <img src="https://img.freepik.com/free-photo/smiling-doctor-with-stethoscope_23-2148168478.jpg" class="w-full h-full object-cover" alt="Doctor">
                     </div>
-                    <h3 class="text-xl font-black text-slate-900 italic uppercase">{{ __('videoconsult.doctor_name') }}</h3>
-                    <p class="text-[9px] font-black text-blue-600 uppercase tracking-widest mb-8">{{ __('videoconsult.doctor_role') }}</p>
+                    <h3 class="text-xl font-black text-slate-900 italic uppercase">{{ $assignedDoctor?->name ?? __('videoconsult.doctor_name') }}</h3>
+                    <p class="text-[9px] font-black text-blue-600 uppercase tracking-widest mb-8">{{ $assignedDoctor ? 'Assigned Medical Doctor' : __('videoconsult.doctor_role') }}</p>
 
                     <button id="start-btn" onclick="initiateCall()" class="w-full bg-blue-600 text-white py-6 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition active:scale-95">
                         {{ __('videoconsult.start_call') }}

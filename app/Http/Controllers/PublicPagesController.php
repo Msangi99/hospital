@@ -7,8 +7,11 @@ use App\Models\Hospital;
 use App\Models\NewsletterSubscriber;
 use App\Models\SafeGirlSymptom;
 use App\Models\SosRequest;
+use App\Models\User;
+use App\Models\VideoSession;
 use App\Services\OverpassInterpreterClient;
 use App\Services\SafeGirlAiService;
+use App\Services\SafeGirlWebhookService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -146,10 +149,83 @@ class PublicPagesController extends Controller
 
     public function videoConsult(Request $request): View
     {
-        $roomName = 'SemaNami-Room-'.md5((string) $request->user()->id.'-'.(string) now()->timestamp);
+        /** @var User $user */
+        $user = $request->user();
+        $role = (string) ($user->role ?? '');
+        $requestedRoom = trim((string) $request->query('room', ''));
+
+        $roomName = '';
+        $videoAlert = 'Video room ready.';
+        $assignedDoctor = null;
+
+        if ($requestedRoom !== '') {
+            $session = VideoSession::query()
+                ->where('room_id', $requestedRoom)
+                ->first();
+
+            if ($session) {
+                if ($role === 'PATIENT' && (int) $session->patient_id !== (int) $user->id) {
+                    abort(403);
+                }
+                if ($role === 'MEDICAL_TEAM' && (int) $session->doctor_id !== (int) $user->id) {
+                    abort(403);
+                }
+
+                $roomName = (string) $session->room_id;
+                if ($session->doctor_id) {
+                    $assignedDoctor = User::query()->find($session->doctor_id);
+                }
+                $videoAlert = $role === 'MEDICAL_TEAM'
+                    ? 'New patient call request received. Join now.'
+                    : 'Connected to your requested consultation room.';
+            }
+        }
+
+        if ($roomName === '' && $role === 'PATIENT') {
+            $openSession = VideoSession::query()
+                ->where('patient_id', $user->id)
+                ->whereNull('end_time')
+                ->latest('id')
+                ->first();
+
+            if ($openSession) {
+                $roomName = (string) $openSession->room_id;
+                if ($openSession->doctor_id) {
+                    $assignedDoctor = User::query()->find($openSession->doctor_id);
+                    $videoAlert = 'Reconnect successful. Your doctor request is still active.';
+                } else {
+                    $videoAlert = 'Reconnect successful. Searching for available doctor.';
+                }
+            } else {
+                $roomName = 'SemaNami-Room-'.md5((string) $user->id.'-'.(string) now()->timestamp);
+                $assignedDoctor = User::query()
+                    ->where('role', 'MEDICAL_TEAM')
+                    ->where('status', 'ACTIVE')
+                    ->inRandomOrder()
+                    ->first();
+
+                VideoSession::query()->create([
+                    'patient_id' => (int) $user->id,
+                    'doctor_id' => $assignedDoctor?->id,
+                    'room_id' => $roomName,
+                    'start_time' => now(),
+                    'end_time' => null,
+                ]);
+
+                $videoAlert = $assignedDoctor
+                    ? 'Call request sent. Dr. '.$assignedDoctor->name.' has been invited to join.'
+                    : 'Call request created. No active doctor found right now.';
+            }
+        }
+
+        if ($roomName === '') {
+            $roomName = 'SemaNami-Room-'.md5((string) $user->id.'-'.(string) now()->timestamp);
+        }
 
         return view('public.video-consult', [
             'roomName' => $roomName,
+            'videoAlert' => $videoAlert,
+            'assignedDoctor' => $assignedDoctor,
         ]);
     }
 
@@ -165,6 +241,11 @@ class PublicPagesController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => substr((string) $request->userAgent(), 0, 500),
         ]);
+
+        $webhookMessage = (string) $data['symptom_message'];
+        app()->terminating(function () use ($webhookMessage) {
+            app(SafeGirlWebhookService::class)->notifyWithMessage($webhookMessage);
+        });
 
         return back()->with('status', __('public.safe_girl_symptom_received'));
     }
@@ -191,19 +272,33 @@ class PublicPagesController extends Controller
             'user_agent' => substr((string) $request->userAgent(), 0, 500),
         ]);
 
-        try {
-            $result = $this->safeGirlAi->respond($history);
-        } catch (\Throwable $e) {
-            report($e);
+        $webhook = app(SafeGirlWebhookService::class);
+        $webhookText = $webhook->fetchAssistantReply((string) $data['message']);
 
+        if ($webhookText !== null) {
             $result = [
-                'assistant_message' => __('safe_girl.ai_error_reply'),
                 'type' => 'question',
+                'assistant_message' => $webhookText,
                 'possible_condition' => null,
                 'urgency' => null,
                 'advice' => [],
                 'red_flags' => [],
             ];
+        } else {
+            try {
+                $result = $this->safeGirlAi->respond($history);
+            } catch (\Throwable $e) {
+                report($e);
+
+                $result = [
+                    'assistant_message' => __('safe_girl.ai_error_reply'),
+                    'type' => 'question',
+                    'possible_condition' => null,
+                    'urgency' => null,
+                    'advice' => [],
+                    'red_flags' => [],
+                ];
+            }
         }
 
         return response()->json([

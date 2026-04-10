@@ -23,6 +23,7 @@ return [
     'protected' => 'Protected',
     'sent_to_moderator' => 'Sent to Moderator',
     'received_reply' => 'Received. The assistant is reviewing your message.',
+    'typing_indicator_a11y' => 'Assistant is typing a reply',
     'safe_girl_symptom_received' => 'Your message was received.',
 
     'possible_condition' => 'Possible condition',

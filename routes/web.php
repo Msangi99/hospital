@@ -76,70 +76,51 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin', [RolePagesController::class, 'adminDashboard'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.dashboard');
-    Route::get('/admin/emergencies', [RolePagesController::class, 'adminEmergencies'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.emergencies');
-    Route::get('/admin/newsletter', [RolePagesController::class, 'adminNewsletter'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.newsletter');
-    Route::get('/admin/alerts', [RolePagesController::class, 'adminAlerts'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.alerts');
-    Route::get('/admin/ai', [RolePagesController::class, 'adminAiSettings'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.ai-settings');
-    Route::post('/admin/ai', [RolePagesController::class, 'adminAiSettingsUpdate'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.ai-settings.update');
-    Route::post('/admin/ai/models', [RolePagesController::class, 'adminAiModelsFetch'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.ai-settings.models');
-    Route::get('/admin/users', [RolePagesController::class, 'adminUsers'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.users');
-    Route::post('/admin/users', [RolePagesController::class, 'adminUsersStore'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.users.store');
-    Route::get('/admin/facilities', [RolePagesController::class, 'adminFacilities'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.facilities');
-    Route::post('/admin/facilities', [RolePagesController::class, 'adminFacilitiesStore'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.facilities.store');
-    Route::post('/admin/facilities/{hospital}/moderate', [RolePagesController::class, 'adminFacilitiesModerate'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.facilities.moderate');
-    Route::get('/admin/analytics', [RolePagesController::class, 'adminAnalytics'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.analytics');
-    Route::get('/admin/audit-logs', [RolePagesController::class, 'adminAuditLogs'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.audit-logs');
-    Route::get('/admin/billing-integrations', [RolePagesController::class, 'adminBillingIntegrations'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.billing-integrations');
+    Route::middleware(['role:SUPERADMIN', 'admin.mfa', 'admin.ip'])->group(function () {
+        Route::get('/admin', [RolePagesController::class, 'adminDashboard'])
+            ->name('admin.dashboard');
+        Route::get('/admin/emergencies', [RolePagesController::class, 'adminEmergencies'])
+            ->name('admin.emergencies');
+        Route::get('/admin/newsletter', [RolePagesController::class, 'adminNewsletter'])
+            ->name('admin.newsletter');
+        Route::get('/admin/alerts', [RolePagesController::class, 'adminAlerts'])
+            ->name('admin.alerts');
+        Route::get('/admin/ai', [RolePagesController::class, 'adminAiSettings'])
+            ->name('admin.ai-settings');
+        Route::post('/admin/ai', [RolePagesController::class, 'adminAiSettingsUpdate'])
+            ->name('admin.ai-settings.update');
+        Route::post('/admin/ai/models', [RolePagesController::class, 'adminAiModelsFetch'])
+            ->name('admin.ai-settings.models');
+        Route::get('/admin/users', [RolePagesController::class, 'adminUsers'])
+            ->name('admin.users');
+        Route::post('/admin/users', [RolePagesController::class, 'adminUsersStore'])
+            ->name('admin.users.store');
+        Route::get('/admin/facilities', [RolePagesController::class, 'adminFacilities'])
+            ->name('admin.facilities');
+        Route::post('/admin/facilities', [RolePagesController::class, 'adminFacilitiesStore'])
+            ->name('admin.facilities.store');
+        Route::post('/admin/facilities/{hospital}/moderate', [RolePagesController::class, 'adminFacilitiesModerate'])
+            ->name('admin.facilities.moderate');
+        Route::get('/admin/analytics', [RolePagesController::class, 'adminAnalytics'])
+            ->name('admin.analytics');
+        Route::get('/admin/audit-logs', [RolePagesController::class, 'adminAuditLogs'])
+            ->name('admin.audit-logs');
+        Route::get('/admin/billing-integrations', [RolePagesController::class, 'adminBillingIntegrations'])
+            ->name('admin.billing-integrations');
 
-    Route::get('/admin/console', [AdminConsoleController::class, 'index'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.console');
-    Route::post('/admin/console/migrate', [AdminConsoleController::class, 'migrate'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.console.migrate');
-    Route::post('/admin/console/migrate-path', [AdminConsoleController::class, 'migratePath'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.console.migrate-path');
-    Route::post('/admin/console/seed', [AdminConsoleController::class, 'seedAll'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.console.seed');
-    Route::post('/admin/console/seed-class', [AdminConsoleController::class, 'seedClass'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.console.seed-class');
-    Route::post('/admin/console/tool', [AdminConsoleController::class, 'tool'])
-        ->middleware(['role:SUPERADMIN'])
-        ->name('admin.console.tool');
+        Route::get('/admin/console', [AdminConsoleController::class, 'index'])
+            ->name('admin.console');
+        Route::post('/admin/console/migrate', [AdminConsoleController::class, 'migrate'])
+            ->name('admin.console.migrate');
+        Route::post('/admin/console/migrate-path', [AdminConsoleController::class, 'migratePath'])
+            ->name('admin.console.migrate-path');
+        Route::post('/admin/console/seed', [AdminConsoleController::class, 'seedAll'])
+            ->name('admin.console.seed');
+        Route::post('/admin/console/seed-class', [AdminConsoleController::class, 'seedClass'])
+            ->name('admin.console.seed-class');
+        Route::post('/admin/console/tool', [AdminConsoleController::class, 'tool'])
+            ->name('admin.console.tool');
+    });
 
     Route::get('/owner', [RolePagesController::class, 'hospitalOwnerDashboard'])
         ->middleware(['role:HOSPITAL_OWNER'])
@@ -185,6 +166,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/doctor/appointments', [RolePagesController::class, 'doctorAppointments'])
         ->middleware(['role:MEDICAL_TEAM'])
         ->name('doctor.appointments');
+    Route::post('/doctor/appointments', [RolePagesController::class, 'doctorAppointmentsStore'])
+        ->middleware(['role:MEDICAL_TEAM'])
+        ->name('doctor.appointments.store');
 
     Route::get('/doctor/patients', [RolePagesController::class, 'doctorPatients'])
         ->middleware(['role:MEDICAL_TEAM'])

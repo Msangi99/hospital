@@ -27,28 +27,31 @@
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.staff_type') }}</label>
                 <select name="staff_type" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500">
-                    <option value="MD">{{ __('roleui.staff_md') }}</option>
-                    <option value="GYNO">{{ __('roleui.staff_gyno') }}</option>
-                    <option value="MIDWIFE">{{ __('roleui.staff_midwife') }}</option>
-                    <option value="NURSE">{{ __('roleui.staff_nurse') }}</option>
-                    <option value="SPECIALIST">{{ __('roleui.staff_specialist') }}</option>
-                    <option value="AMBULANCE_STAFF">{{ __('roleui.staff_ambulance') }}</option>
+                    <option value="MD" @selected(old('staff_type', $profile->staff_type ?? '') === 'MD')>{{ __('roleui.staff_md') }}</option>
+                    <option value="GYNO" @selected(old('staff_type', $profile->staff_type ?? '') === 'GYNO')>{{ __('roleui.staff_gyno') }}</option>
+                    <option value="MIDWIFE" @selected(old('staff_type', $profile->staff_type ?? '') === 'MIDWIFE')>{{ __('roleui.staff_midwife') }}</option>
+                    <option value="NURSE" @selected(old('staff_type', $profile->staff_type ?? '') === 'NURSE')>{{ __('roleui.staff_nurse') }}</option>
+                    <option value="SPECIALIST" @selected(old('staff_type', $profile->staff_type ?? '') === 'SPECIALIST')>{{ __('roleui.staff_specialist') }}</option>
+                    <option value="AMBULANCE_STAFF" @selected(old('staff_type', $profile->staff_type ?? '') === 'AMBULANCE_STAFF')>{{ __('roleui.staff_ambulance') }}</option>
                 </select>
             </div>
 
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.specialization') }}</label>
-                <input name="specialization" value="{{ old('specialization') }}" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.specialization_placeholder') }}">
+                <input name="specialization" value="{{ old('specialization', $profile->specialization ?? '') }}" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.specialization_placeholder') }}">
             </div>
 
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.registration_no') }}</label>
-                <input name="registration_no" value="{{ old('registration_no') }}" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.registration_no_placeholder') }}">
+                <input name="registration_no" value="{{ old('registration_no', $profile->registration_no ?? '') }}" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500" placeholder="{{ __('roleui.registration_no_placeholder') }}">
             </div>
 
             <div>
                 <label class="mb-2 block px-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{{ __('roleui.license_copy') }}</label>
-                <input type="file" name="license_copy" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500">
+                <input type="file" name="license_copy" class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none transition focus:border-blue-500">
+                @if(! empty($profile?->license_copy))
+                    <p class="mt-2 text-xs font-bold text-slate-500">Existing license uploaded. Upload a new file only if you want to replace it.</p>
+                @endif
             </div>
 
             <button type="submit" class="w-full rounded-2xl bg-slate-900 p-5 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-blue-600">
