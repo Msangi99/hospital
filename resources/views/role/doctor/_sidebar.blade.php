@@ -14,6 +14,18 @@
     <i class="fas fa-user-injured w-5 text-blue-300"></i>
     <span>{{ __('roleui.sidebar_patients') }}</span>
 </a>
+<a href="{{ route('doctor.conversations') }}" class="{{ $active === 'conversations' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-comments w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_conversations') }}</span>
+</a>
+<a href="{{ route('doctor.video-consult') }}" class="{{ $active === 'video' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-video w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_video_consult') }}</span>
+</a>
+<a href="{{ route('doctor.video-requests') }}" class="{{ $active === 'video-requests' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-inbox w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_video_requests') }}</span>
+</a>
 <a href="{{ route('doctor.complete-profile') }}" class="{{ $active === 'profile' ? $linkActive : $linkInactive }}">
     <i class="fas fa-id-card w-5 text-blue-300"></i>
     <span>{{ __('roleui.sidebar_complete_profile') }}</span>

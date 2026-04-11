@@ -419,7 +419,19 @@
                     <h3 class="text-white font-black mb-8 text-xs uppercase tracking-[0.2em] border-l-4 border-blue-600 pl-4">{{ __('home.footer_services') }}</h3>
                     <ul class="text-sm space-y-4 font-bold">
                         <li><a href="{{ route('ambulance') }}" class="hover:text-white transition">{{ __('home.footer_service_1') }}</a></li>
-                        <li><a href="{{ route('video-consult') }}" class="hover:text-white transition">{{ __('home.footer_service_2') }}</a></li>
+                        @if (! auth()->check() || in_array((string) (auth()->user()->role ?? ''), ['PATIENT', 'MEDICAL_TEAM'], true))
+                            <li>
+                                @guest
+                                    <a href="{{ route('video-consult') }}" class="hover:text-white transition">{{ __('home.footer_service_2') }}</a>
+                                @else
+                                    @if ((string) auth()->user()->role === 'PATIENT')
+                                        <a href="{{ route('patient.video-consult') }}" class="hover:text-white transition">{{ __('home.footer_service_2') }}</a>
+                                    @elseif ((string) auth()->user()->role === 'MEDICAL_TEAM')
+                                        <a href="{{ route('doctor.video-consult') }}" class="hover:text-white transition">{{ __('home.footer_service_2') }}</a>
+                                    @endif
+                                @endguest
+                            </li>
+                        @endif
                         <li><a href="{{ route('safe-girl') }}" class="hover:text-white transition text-pink-400">{{ __('home.footer_service_3') }}</a></li>
                         <li><a href="{{ route('ussd') }}" class="hover:text-white transition">{{ __('home.footer_service_4') }}</a></li>
                     </ul>

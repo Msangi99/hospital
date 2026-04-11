@@ -19,7 +19,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class RolePagesController extends Controller
@@ -695,17 +694,6 @@ class RolePagesController extends Controller
             ->whereIn('id', $nextAppointments->pluck('patient_id')->filter()->values())
             ->pluck('name', 'id');
 
-        $videoRequests = VideoSession::query()
-            ->where('doctor_id', $doctor->id)
-            ->whereNull('end_time')
-            ->latest('id')
-            ->limit(5)
-            ->get(['id', 'patient_id', 'room_id', 'start_time']);
-
-        $videoPatientNames = User::query()
-            ->whereIn('id', $videoRequests->pluck('patient_id')->filter()->values())
-            ->pluck('name', 'id');
-
         return view('role.doctor.dashboard', [
             'profile' => $profile,
             'stats' => [
@@ -716,6 +704,26 @@ class RolePagesController extends Controller
             ],
             'nextAppointments' => $nextAppointments,
             'patientNames' => $patientNames,
+        ]);
+    }
+
+    public function doctorVideoRequests(): View
+    {
+        /** @var User $doctor */
+        $doctor = request()->user();
+
+        $videoRequests = VideoSession::query()
+            ->where('doctor_id', $doctor->id)
+            ->whereNull('end_time')
+            ->latest('id')
+            ->limit(50)
+            ->get(['id', 'patient_id', 'room_id', 'start_time']);
+
+        $videoPatientNames = User::query()
+            ->whereIn('id', $videoRequests->pluck('patient_id')->filter()->values())
+            ->pluck('name', 'id');
+
+        return view('role.doctor.video-requests', [
             'videoRequests' => $videoRequests,
             'videoPatientNames' => $videoPatientNames,
         ]);
@@ -877,6 +885,28 @@ class RolePagesController extends Controller
     public function patientDashboard(): View
     {
         return view('role.patient.dashboard');
+    }
+
+    public function patientAppointments(): View
+    {
+        /** @var User $patient */
+        $patient = request()->user();
+
+        $appointments = Appointment::query()
+            ->where('patient_id', $patient->id)
+            ->orderByDesc('appointment_date')
+            ->orderByDesc('appointment_time')
+            ->limit(200)
+            ->get();
+
+        $doctorNames = User::query()
+            ->whereIn('id', $appointments->pluck('doctor_id')->filter()->values())
+            ->pluck('name', 'id');
+
+        return view('role.patient.appointments', [
+            'appointments' => $appointments,
+            'doctorNames' => $doctorNames,
+        ]);
     }
 
     public function facilityDashboard(): View

@@ -6,19 +6,6 @@
     @endslot
 
     <div class="space-y-6">
-        @if($videoRequests->isNotEmpty())
-            <div class="sticky top-4 z-40 mx-auto max-w-3xl rounded-2xl border border-blue-100 bg-white/95 p-4 text-center shadow-xl backdrop-blur">
-                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Incoming Video Consultation</p>
-                <p class="mt-1 text-sm font-bold text-slate-700">
-                    {{ ($videoPatientNames[$videoRequests->first()->patient_id] ?? 'A patient') }} is requesting to join video consult.
-                </p>
-                <a href="{{ route('video-consult', ['room' => $videoRequests->first()->room_id]) }}"
-                   class="mt-3 inline-flex rounded-xl bg-blue-600 px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-blue-700">
-                    Join Call Now
-                </a>
-            </div>
-        @endif
-
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
                 <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Today Appointments</p>

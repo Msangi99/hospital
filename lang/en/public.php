@@ -31,4 +31,3 @@ return [
 
     'sos_received' => 'SOS request received. Help is being coordinated.',
 ];
-

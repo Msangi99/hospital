@@ -2,6 +2,22 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        @auth
+            @if (in_array((string) auth()->user()->role, ['MEDICAL_TEAM', 'PATIENT'], true))
+                @if ((string) auth()->user()->role === 'MEDICAL_TEAM')
+                    <meta name="doctor-broadcast-id" content="{{ auth()->id() }}">
+                    <script>
+                        window.__videoToastLabels = {
+                            title: @json(__('roleui.video_toast_title')),
+                            join: @json(__('roleui.video_toast_join')),
+                            dismiss: @json(__('roleui.video_toast_dismiss')),
+                        };
+                    </script>
+                @endif
+                @vite(['resources/js/app.js'])
+            @endif
+        @endauth
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     </head>
     @php
@@ -22,6 +38,25 @@
         }
     @endphp
     <body class="h-screen overflow-hidden bg-white text-slate-900">
+        @auth
+            @if ((string) auth()->user()->role === 'MEDICAL_TEAM')
+                <div
+                    id="doctor-video-toast"
+                    class="fixed left-1/2 top-6 z-[70] hidden w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 px-2"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+                @if (! empty($doctorInitialVideoToast))
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            if (typeof window.doctorVideoToastShow === 'function') {
+                                window.doctorVideoToastShow(@json($doctorInitialVideoToast));
+                            }
+                        });
+                    </script>
+                @endif
+            @endif
+        @endauth
         <div class="h-screen flex overflow-hidden">
             <div
                 id="role-sidebar-backdrop"

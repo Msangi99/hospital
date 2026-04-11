@@ -1,0 +1,25 @@
+{
+    "name": "macellan/laravel-jitsi",
+    "description": "Jitsi Meet embed helpers for Laravel (SemaNami)",
+    "version": "1.0.0",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "illuminate/contracts": "^13.0",
+        "illuminate/support": "^13.0",
+        "illuminate/view": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Macellan\\LaravelJitsi\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Macellan\\LaravelJitsi\\LaravelJitsiServiceProvider"
+            ]
+        }
+    }
+}

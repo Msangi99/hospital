@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\AdminConsoleController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\PublicPagesController;
 use App\Http\Controllers\RolePagesController;
+use App\Http\Controllers\VideoConsultController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicPagesController::class, 'home'])->name('home');
@@ -20,9 +23,17 @@ Route::get('/terms', [PublicPagesController::class, 'terms'])->name('terms');
 Route::get('/ussd', [PublicPagesController::class, 'ussd'])->name('ussd');
 Route::get('/ussd-info', [PublicPagesController::class, 'ussdInfo'])->name('ussd.info');
 Route::get('/safe-girl', [PublicPagesController::class, 'safeGirl'])->name('safe-girl');
-Route::get('/video-consult', [PublicPagesController::class, 'videoConsult'])
-    ->middleware(['auth'])
-    ->name('video-consult');
+Route::get('/video-consult', function (Request $request) {
+    if (! $request->user()) {
+        return redirect()->guest(route('login'));
+    }
+
+    return match ((string) ($request->user()->role ?? '')) {
+        'PATIENT' => redirect()->route('patient.video-consult', $request->query()),
+        'MEDICAL_TEAM' => redirect()->route('doctor.video-consult', $request->query()),
+        default => abort(403),
+    };
+})->name('video-consult');
 Route::post('/safe-girl/symptoms', [PublicPagesController::class, 'safeGirlSymptomSubmit'])
     ->middleware(['auth'])
     ->name('safe-girl.symptoms');
@@ -174,6 +185,14 @@ Route::middleware(['auth'])->group(function () {
         ->middleware(['role:MEDICAL_TEAM'])
         ->name('doctor.patients');
 
+    Route::get('/doctor/video-requests', [RolePagesController::class, 'doctorVideoRequests'])
+        ->middleware(['role:MEDICAL_TEAM'])
+        ->name('doctor.video-requests');
+
+    Route::get('/doctor/video-consult', [VideoConsultController::class, 'showDoctor'])
+        ->middleware(['role:MEDICAL_TEAM'])
+        ->name('doctor.video-consult');
+
     Route::get('/doctor/complete-profile', [RolePagesController::class, 'doctorCompleteProfile'])
         ->middleware(['role:MEDICAL_TEAM'])
         ->name('doctor.complete-profile');
@@ -184,6 +203,29 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/patient', [RolePagesController::class, 'patientDashboard'])
         ->middleware(['role:PATIENT'])
         ->name('patient.dashboard');
+
+    Route::get('/patient/appointments', [RolePagesController::class, 'patientAppointments'])
+        ->middleware(['role:PATIENT'])
+        ->name('patient.appointments');
+
+    Route::get('/patient/video-consult', [VideoConsultController::class, 'showPatient'])
+        ->middleware(['role:PATIENT'])
+        ->name('patient.video-consult');
+
+    Route::get('/patient/conversations', [ConversationController::class, 'patientIndex'])
+        ->middleware(['role:PATIENT'])
+        ->name('patient.conversations');
+    Route::post('/patient/conversations', [ConversationController::class, 'patientStart'])
+        ->middleware(['role:PATIENT'])
+        ->name('patient.conversations.start');
+
+    Route::get('/doctor/conversations', [ConversationController::class, 'doctorIndex'])
+        ->middleware(['role:MEDICAL_TEAM'])
+        ->name('doctor.conversations');
+
+    Route::post('/conversations/{conversation}/messages', [ConversationController::class, 'storeMessage'])
+        ->middleware(['role:PATIENT,MEDICAL_TEAM'])
+        ->name('portal.conversations.messages');
 
     Route::get('/facility', [RolePagesController::class, 'facilityDashboard'])
         ->middleware(['role:FACILITY'])
