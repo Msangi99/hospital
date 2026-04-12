@@ -69,7 +69,7 @@ class AiProviderModelsListService
             ->withHeaders([
                 'Authorization' => 'Bearer '.$apiKey,
                 'Referer' => (string) config('app.url', ''),
-                'X-Title' => (string) config('app.name', 'Laravel'),
+                'X-Title' => (string) config('app.name'),
             ])
             ->acceptJson()
             ->get('https://openrouter.ai/api/v1/models');
