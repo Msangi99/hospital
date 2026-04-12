@@ -16,7 +16,7 @@ test('superadmin can list openai models when api responds', function () {
         ], 200),
     ]);
 
-    $admin = User::factory()->create(['role' => 'SUPERADMIN']);
+    $admin = User::factory()->withTwoFactor()->create(['role' => 'SUPERADMIN']);
     $this->actingAs($admin);
 
     $response = $this->postJson(route('admin.ai-settings.models'), [
@@ -42,7 +42,7 @@ test('non superadmin cannot list ai models', function () {
 });
 
 test('requires api key when not ollama and no saved key', function () {
-    $admin = User::factory()->create(['role' => 'SUPERADMIN']);
+    $admin = User::factory()->withTwoFactor()->create(['role' => 'SUPERADMIN']);
     $this->actingAs($admin);
 
     $this->postJson(route('admin.ai-settings.models'), [

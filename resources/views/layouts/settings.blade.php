@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-white">
     <head>
         @include('partials.head')
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     </head>
     @php
@@ -75,7 +76,19 @@
                         <div class="space-y-2">
                             @switch((string) ($currentUser->role ?? ''))
                                 @case('SUPERADMIN')
-                                    @include('role.admin._sidebar', ['active' => $roleNavActive])
+                                    @if (config('admin-security.require_superadmin_mfa') && ! auth()->user()->hasEnabledTwoFactorAuthentication())
+                                        <div class="rounded-2xl border border-amber-400/40 bg-amber-950/50 p-4 text-xs font-semibold leading-relaxed text-amber-50">
+                                            <p class="mb-3">{{ __('roleui.superadmin_sidebar_mfa_notice') }}</p>
+                                            <a
+                                                href="{{ route('settings.prepare-admin-access') }}"
+                                                class="inline-flex w-full items-center justify-center rounded-xl bg-amber-400 px-3 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-900 transition hover:bg-amber-300"
+                                            >
+                                                {{ __('roleui.superadmin_mfa_continue_password') }}
+                                            </a>
+                                        </div>
+                                    @else
+                                        @include('role.admin._sidebar', ['active' => $roleNavActive])
+                                    @endif
                                     @break
                                 @case('MEDICAL_TEAM')
                                     @include('role.doctor._sidebar', ['active' => $roleNavActive])

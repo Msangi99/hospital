@@ -1,4 +1,8 @@
 <section class="w-full max-w-2xl bg-white dark:bg-white">
+    @if ((string) (auth()->user()->role ?? '') === 'SUPERADMIN' && config('admin-security.require_superadmin_mfa') && ! auth()->user()->hasEnabledTwoFactorAuthentication())
+        @include('settings.partials.superadmin-mfa-panel')
+    @endif
+
     <header class="mb-10 border-b border-slate-200 pb-8">
         <h1 class="text-2xl font-black tracking-tighter text-slate-900 sm:text-3xl">
             {{ __('roleui.sidebar_account') }}

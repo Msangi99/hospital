@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('superadmin can open and update ai settings page', function () {
-    $admin = User::factory()->create(['role' => 'SUPERADMIN']);
+    $admin = User::factory()->withTwoFactor()->create(['role' => 'SUPERADMIN']);
     $this->actingAs($admin);
 
     $this->get(route('admin.ai-settings'))

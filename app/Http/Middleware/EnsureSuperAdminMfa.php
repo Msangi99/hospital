@@ -27,11 +27,10 @@ class EnsureSuperAdminMfa
 
         if (! $user->two_factor_confirmed_at) {
             return redirect()
-                ->route('profile.edit')
-                ->with('status', 'Please enable and confirm 2FA before accessing admin routes.');
+                ->route('profile.edit', ['admin_mfa' => '1'])
+                ->with('status', __('roleui.superadmin_mfa_must_enable'));
         }
 
         return $next($request);
     }
 }
-
