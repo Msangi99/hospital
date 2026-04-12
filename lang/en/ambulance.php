@@ -19,5 +19,6 @@ return [
     'no_gps' => 'Your browser does not support GPS/location.',
     'position_unavailable' => 'Location is unavailable right now. Please try again.',
     'timeout' => 'Location request timed out. Please try again.',
+    'callback_phone_label' => 'Callback phone (required)',
+    'phone_required' => 'Enter a phone number we can call back.',
 ];
-

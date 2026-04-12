@@ -20,6 +20,7 @@
     'emergency' => __('roleui.facility_emergency_services'),
     'note' => __('roleui.facility_note'),
     'description' => __('roleui.facility_description'),
+    'kyc_submitted' => __('roleui.facility_kyc_submitted'),
     'empty' => __('roleui.facility_details_empty'),
 ])
 
@@ -160,7 +161,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-200 bg-white">
                         @forelse($facilities as $facility)
-                            <tr class="transition hover:bg-slate-50">
+                            <tr id="hospital-{{ $facility->id }}" class="transition hover:bg-slate-50">
                                 <td class="px-6 py-4 text-sm font-black text-slate-900">{{ $facility->name }}</td>
                                 <td class="px-6 py-4 text-xs font-bold text-slate-600">{{ $facility->location }}</td>
                                 <td class="px-6 py-4 text-xs font-bold text-slate-600">
@@ -197,6 +198,7 @@
                                         data-type="{{ $facility->type }}"
                                         data-status="{{ $facility->status }}"
                                         data-verification="{{ $facility->verification_status }}"
+                                        data-kyc-submitted="{{ $facility->kyc_submitted_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') ?? '' }}"
                                         data-owner="{{ $facility->owner?->name }}"
                                         data-owner-email="{{ $facility->owner?->email }}"
                                         data-phone="{{ $facility->contact_phone }}"
@@ -341,6 +343,7 @@
                         row(labels.type, d.type) +
                         row(labels.status, d.status) +
                         row(labels.verification, d.verification) +
+                        row(labels.kyc_submitted, d.kycSubmitted || labels.empty) +
                         row(labels.owner, d.owner) +
                         row(labels.owner_email, d.ownerEmail) +
                         row(labels.location, d.location) +

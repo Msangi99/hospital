@@ -30,6 +30,7 @@ return [
     'role_label' => 'Account type',
     'role_patient' => 'Patient',
     'role_medical_team' => 'Medical staff',
+    'role_nurse' => 'Nurse',
     'role_ambulance' => 'Ambulance team',
     'role_facility' => 'Facility / Hospital',
     'role_hospital_owner' => 'Hospital owner',
@@ -75,4 +76,3 @@ return [
     'login_using_recovery' => 'login using a recovery code',
     'login_using_auth_code' => 'login using an authentication code',
 ];
-

@@ -14,7 +14,27 @@
     <i class="fas fa-video w-5 text-blue-300"></i>
     <span>{{ __('roleui.sidebar_video_consult') }}</span>
 </a>
+<a href="{{ route('patient.hospitals') }}" class="{{ $active === 'hospitals' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-hospital w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_patient_hospitals') }}</span>
+</a>
 <a href="{{ route('patient.conversations') }}" class="{{ $active === 'conversations' ? $linkActive : $linkInactive }}">
     <i class="fas fa-comments w-5 text-blue-300"></i>
     <span>{{ __('roleui.sidebar_conversations') }}</span>
+</a>
+<a href="{{ route('patient.records') }}" class="{{ $active === 'records' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-file-medical w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_patient_records') }}</span>
+</a>
+<a href="{{ route('patient.billing') }}" class="{{ $active === 'billing' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-file-invoice-dollar w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_patient_billing') }}</span>
+</a>
+<a href="{{ route('patient.ambulance') }}" class="{{ $active === 'ambulance' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-truck-medical w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_patient_ambulance') }}</span>
+</a>
+<a href="{{ route('patient.help') }}" class="{{ $active === 'help' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-circle-question w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_patient_help') }}</span>
 </a>

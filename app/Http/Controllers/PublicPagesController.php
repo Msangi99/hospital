@@ -6,7 +6,7 @@ use App\Models\ContactMessage;
 use App\Models\Hospital;
 use App\Models\NewsletterSubscriber;
 use App\Models\SafeGirlSymptom;
-use App\Models\SosRequest;
+use App\Services\AmbulanceSosSubmissionService;
 use App\Services\OverpassInterpreterClient;
 use App\Services\SafeGirlAiService;
 use App\Services\SafeGirlWebhookService;
@@ -61,25 +61,9 @@ class PublicPagesController extends Controller
         return view('public.ambulance');
     }
 
-    public function ambulanceSos(Request $request): RedirectResponse
+    public function ambulanceSos(Request $request, AmbulanceSosSubmissionService $sos): RedirectResponse
     {
-        $data = $request->validate([
-            'latitude' => ['required', 'numeric'],
-            'longitude' => ['required', 'numeric'],
-            'address' => ['nullable', 'string', 'max:5000'],
-        ]);
-
-        SosRequest::create([
-            'user_id' => $request->user()?->id,
-            'phone' => $request->user()?->phone,
-            'latitude' => (float) $data['latitude'],
-            'longitude' => (float) $data['longitude'],
-            'address' => $data['address'] ?? null,
-            'ip_address' => $request->ip(),
-            'user_agent' => substr((string) $request->userAgent(), 0, 500),
-        ]);
-
-        return back()->with('status', __('public.sos_received'));
+        return $sos->submit($request, 'ambulance');
     }
 
     public function hospitals(Request $request): View

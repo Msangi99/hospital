@@ -14,6 +14,10 @@
     <i class="fas fa-hospital w-5 text-blue-300"></i>
     <span>{{ __('roleui.sidebar_facility_management') }}</span>
 </a>
+<a href="{{ route('admin.owner-kyc') }}" class="{{ $active === 'owner-kyc' ? $linkActive : $linkInactive }}">
+    <i class="fas fa-id-card w-5 text-blue-300"></i>
+    <span>{{ __('roleui.sidebar_owner_kyc') }}</span>
+</a>
 <a href="{{ route('admin.analytics') }}" class="{{ $active === 'analytics' ? $linkActive : $linkInactive }}">
     <i class="fas fa-chart-line w-5 text-blue-300"></i>
     <span>{{ __('roleui.sidebar_platform_analytics') }}</span>

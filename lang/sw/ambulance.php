@@ -19,5 +19,6 @@ return [
     'no_gps' => 'Browser yako haina uwezo wa GPS.',
     'position_unavailable' => 'Eneo halipatikani kwa sasa. Jaribu tena.',
     'timeout' => 'Muda wa kutafuta eneo umeisha. Jaribu tena.',
+    'callback_phone_label' => 'Simu ya kupigwa (inahitajika)',
+    'phone_required' => 'Weka nambari ya simu tunayoweza kupiga.',
 ];
-

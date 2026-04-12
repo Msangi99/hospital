@@ -19,5 +19,6 @@ return [
     'no_gps' => 'Votre navigateur ne supporte pas la géolocalisation.',
     'position_unavailable' => 'La position est indisponible pour le moment. Réessayez.',
     'timeout' => 'Délai dépassé pour la localisation. Réessayez.',
+    'callback_phone_label' => 'Téléphone de rappel (obligatoire)',
+    'phone_required' => 'Entrez un numéro où nous pouvons vous rappeler.',
 ];
-

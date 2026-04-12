@@ -39,13 +39,24 @@ class ConversationMessageSent implements ShouldBroadcastNow
     {
         $this->message->loadMissing('user:id,name');
 
+        $attachmentUrl = $this->message->hasAttachment()
+            ? route('portal.conversations.messages.attachment', [
+                'conversation' => $this->message->conversation_id,
+                'message' => $this->message->id,
+            ])
+            : null;
+
         return [
             'id' => $this->message->id,
             'conversation_id' => $this->message->conversation_id,
             'user_id' => $this->message->user_id,
             'user_name' => (string) ($this->message->user?->name ?? ''),
-            'body' => $this->message->body,
+            'body' => (string) ($this->message->body ?? ''),
             'created_at' => $this->message->created_at?->toIso8601String(),
+            'has_attachment' => $this->message->hasAttachment(),
+            'attachment_kind' => $this->message->attachment_kind,
+            'attachment_name' => $this->message->attachment_original_name,
+            'attachment_url' => $attachmentUrl,
         ];
     }
 }

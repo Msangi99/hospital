@@ -427,7 +427,7 @@
                                     @if ((string) auth()->user()->role === 'PATIENT')
                                         <a href="{{ route('patient.video-consult') }}" class="hover:text-white transition">{{ __('home.footer_service_2') }}</a>
                                     @elseif ((string) auth()->user()->role === 'MEDICAL_TEAM')
-                                        <a href="{{ route('doctor.video-consult') }}" class="hover:text-white transition">{{ __('home.footer_service_2') }}</a>
+                                        <a href="{{ route('doctor.video-requests') }}" class="hover:text-white transition">{{ __('home.footer_service_2') }}</a>
                                     @endif
                                 @endguest
                             </li>

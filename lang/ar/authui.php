@@ -30,6 +30,7 @@ return [
     'role_label' => 'نوع الحساب',
     'role_patient' => 'مريض',
     'role_medical_team' => 'طاقم طبي',
+    'role_nurse' => 'ممرض / ممرضة',
     'role_ambulance' => 'فريق إسعاف',
     'role_facility' => 'منشأة / مستشفى',
     'role_hospital_owner' => 'مالك مستشفى',
@@ -75,4 +76,3 @@ return [
     'login_using_recovery' => 'تسجيل الدخول باستخدام رمز الاستعادة',
     'login_using_auth_code' => 'تسجيل الدخول باستخدام رمز المصادقة',
 ];
-

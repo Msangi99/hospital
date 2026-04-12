@@ -36,10 +36,9 @@ class LoginResponse implements LoginResponseContract
         }
 
         if ($role === 'AMBULANCE') {
-            return redirect()->intended(route('patient.dashboard'));
+            return redirect()->intended(route('ambulance.portal.dashboard'));
         }
 
         return redirect()->intended(route('patient.dashboard'));
     }
 }
-

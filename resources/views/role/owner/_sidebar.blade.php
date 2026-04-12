@@ -7,7 +7,7 @@
     <span>{{ __('roleui.sidebar_dashboard') }}</span>
 </a>
 
-<a href="{{ route('owner.dashboard') }}" class="{{ $linkBase }} {{ ($active ?? '') === 'profile' ? $activeClass : $idleClass }}">
+<a href="{{ route('owner.profile') }}" class="{{ $linkBase }} {{ ($active ?? '') === 'profile' ? $activeClass : $idleClass }}">
     <i class="fas fa-hospital w-5 {{ ($active ?? '') === 'profile' ? 'text-blue-600' : 'text-blue-300' }}"></i>
     <span>{{ __('roleui.owner_sidebar_profile') }}</span>
 </a>

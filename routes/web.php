@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\AdminConsoleController;
+use App\Http\Controllers\AmbulancePortalController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\DoctorNurseCoordinationController;
+use App\Http\Controllers\PatientHospitalNetworkController;
 use App\Http\Controllers\PublicPagesController;
 use App\Http\Controllers\RolePagesController;
 use App\Http\Controllers\VideoConsultController;
@@ -14,7 +17,9 @@ Route::get('/about', [PublicPagesController::class, 'about'])->name('about');
 Route::get('/services', [PublicPagesController::class, 'services'])->name('services');
 Route::get('/hospitals', [PublicPagesController::class, 'hospitals'])->name('hospitals');
 Route::get('/ambulance', [PublicPagesController::class, 'ambulance'])->name('ambulance');
-Route::post('/ambulance/sos', [PublicPagesController::class, 'ambulanceSos'])->name('ambulance.sos');
+Route::post('/ambulance/sos', [PublicPagesController::class, 'ambulanceSos'])
+    ->middleware('throttle:20,1')
+    ->name('ambulance.sos');
 Route::get('/contact', [PublicPagesController::class, 'contact'])->name('contact');
 Route::post('/contact', [PublicPagesController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/docs', [PublicPagesController::class, 'docs'])->name('docs');
@@ -82,6 +87,10 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->route('facility.dashboard');
         }
 
+        if ($role === 'AMBULANCE') {
+            return redirect()->route('ambulance.portal.dashboard');
+        }
+
         return redirect()->route('patient.dashboard');
     })->name('dashboard');
 });
@@ -92,6 +101,12 @@ Route::middleware(['auth'])->group(function () {
             ->name('admin.dashboard');
         Route::get('/admin/emergencies', [RolePagesController::class, 'adminEmergencies'])
             ->name('admin.emergencies');
+        Route::post('/admin/emergencies/{sos}/assign', [RolePagesController::class, 'adminEmergenciesAssign'])
+            ->name('admin.emergencies.assign');
+        Route::post('/admin/emergencies/{sos}/cancel', [RolePagesController::class, 'adminEmergenciesCancel'])
+            ->name('admin.emergencies.cancel');
+        Route::get('/admin/owner-kyc', [RolePagesController::class, 'adminOwnerKyc'])
+            ->name('admin.owner-kyc');
         Route::get('/admin/newsletter', [RolePagesController::class, 'adminNewsletter'])
             ->name('admin.newsletter');
         Route::get('/admin/alerts', [RolePagesController::class, 'adminAlerts'])
@@ -136,6 +151,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/owner', [RolePagesController::class, 'hospitalOwnerDashboard'])
         ->middleware(['role:HOSPITAL_OWNER'])
         ->name('owner.dashboard');
+    Route::get('/owner/profile', [RolePagesController::class, 'hospitalOwnerProfilePage'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->name('owner.profile');
+    Route::post('/owner/kyc-submit', [RolePagesController::class, 'hospitalOwnerKycSubmit'])
+        ->middleware(['role:HOSPITAL_OWNER'])
+        ->name('owner.kyc.submit');
     Route::post('/owner/profile', [RolePagesController::class, 'hospitalOwnerProfileUpdate'])
         ->middleware(['role:HOSPITAL_OWNER'])
         ->name('owner.profile.update');
@@ -173,6 +194,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/doctor', [RolePagesController::class, 'doctorDashboard'])
         ->middleware(['role:MEDICAL_TEAM'])
         ->name('doctor.dashboard');
+    Route::get('/doctor/nurse-coordination', [DoctorNurseCoordinationController::class, 'doctorIndex'])
+        ->middleware(['role:MEDICAL_TEAM'])
+        ->name('doctor.nurse-coordination');
+    Route::post('/doctor/nurse-coordination', [DoctorNurseCoordinationController::class, 'doctorStart'])
+        ->middleware(['role:MEDICAL_TEAM', 'throttle:30,1'])
+        ->name('doctor.nurse-coordination.start');
+    Route::get('/nurse/doctor-coordination', [DoctorNurseCoordinationController::class, 'nurseIndex'])
+        ->middleware(['role:MEDICAL_TEAM'])
+        ->name('nurse.doctor-coordination');
+    Route::post('/coordination-chats/{chat}/messages', [DoctorNurseCoordinationController::class, 'storeMessage'])
+        ->middleware(['role:MEDICAL_TEAM', 'throttle:60,1'])
+        ->name('portal.coordination.messages');
+    Route::get('/coordination-chats/{chat}/messages/{message}/attachment', [DoctorNurseCoordinationController::class, 'messageAttachment'])
+        ->middleware(['role:MEDICAL_TEAM'])
+        ->name('portal.coordination.messages.attachment');
 
     Route::get('/doctor/appointments', [RolePagesController::class, 'doctorAppointments'])
         ->middleware(['role:MEDICAL_TEAM'])
@@ -211,6 +247,23 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/patient/video-consult', [VideoConsultController::class, 'showPatient'])
         ->middleware(['role:PATIENT'])
         ->name('patient.video-consult');
+    Route::post('/patient/video-consult/start', [VideoConsultController::class, 'startPatientVideo'])
+        ->middleware(['role:PATIENT', 'throttle:20,1'])
+        ->name('patient.video-consult.start');
+
+    Route::get('/patient/ambulance', [RolePagesController::class, 'patientAmbulance'])
+        ->middleware(['role:PATIENT'])
+        ->name('patient.ambulance');
+    Route::post('/patient/ambulance/sos', [RolePagesController::class, 'patientAmbulanceSos'])
+        ->middleware(['role:PATIENT', 'throttle:10,1'])
+        ->name('patient.ambulance.sos');
+
+    Route::get('/patient/hospitals', [PatientHospitalNetworkController::class, 'index'])
+        ->middleware(['role:PATIENT'])
+        ->name('patient.hospitals');
+    Route::post('/patient/hospitals/{hospital}/join', [PatientHospitalNetworkController::class, 'join'])
+        ->middleware(['role:PATIENT', 'throttle:30,1'])
+        ->name('patient.hospitals.join');
 
     Route::get('/patient/conversations', [ConversationController::class, 'patientIndex'])
         ->middleware(['role:PATIENT'])
@@ -219,12 +272,49 @@ Route::middleware(['auth'])->group(function () {
         ->middleware(['role:PATIENT'])
         ->name('patient.conversations.start');
 
+    Route::get('/patient/records', [RolePagesController::class, 'patientRecords'])
+        ->middleware(['role:PATIENT'])
+        ->name('patient.records');
+    Route::get('/patient/billing', [RolePagesController::class, 'patientBilling'])
+        ->middleware(['role:PATIENT'])
+        ->name('patient.billing');
+    Route::get('/patient/help', [RolePagesController::class, 'patientHelp'])
+        ->middleware(['role:PATIENT'])
+        ->name('patient.help');
+
+    Route::middleware(['role:AMBULANCE'])->prefix('crew')->group(function () {
+        Route::get('/', [AmbulancePortalController::class, 'dashboard'])->name('ambulance.portal.dashboard');
+        Route::get('/history', [AmbulancePortalController::class, 'history'])->name('ambulance.portal.history');
+        Route::get('/runs/{sos}', [AmbulancePortalController::class, 'run'])->name('ambulance.portal.run');
+        Route::post('/runs/{sos}/claim', [AmbulancePortalController::class, 'claim'])->name('ambulance.portal.claim');
+        Route::post('/runs/{sos}/advance', [AmbulancePortalController::class, 'advance'])->name('ambulance.portal.advance');
+        Route::post('/runs/{sos}/cancel', [AmbulancePortalController::class, 'cancelRun'])->name('ambulance.portal.cancel');
+        Route::post('/availability', [AmbulancePortalController::class, 'availability'])->name('ambulance.portal.availability');
+    });
+
     Route::get('/doctor/conversations', [ConversationController::class, 'doctorIndex'])
         ->middleware(['role:MEDICAL_TEAM'])
         ->name('doctor.conversations');
+    Route::post('/doctor/conversations', [ConversationController::class, 'doctorStart'])
+        ->middleware(['role:MEDICAL_TEAM', 'throttle:30,1'])
+        ->name('doctor.conversations.start');
+    Route::patch('/conversations/{conversation}/title', [ConversationController::class, 'updateConversationTitle'])
+        ->middleware(['role:MEDICAL_TEAM', 'throttle:60,1'])
+        ->name('portal.conversations.title');
+
+    Route::get('/nurse/patient-chats', [ConversationController::class, 'nurseIndex'])
+        ->middleware(['role:MEDICAL_TEAM'])
+        ->name('nurse.patient-chats');
+    Route::post('/nurse/patient-chats', [ConversationController::class, 'nurseStart'])
+        ->middleware(['role:MEDICAL_TEAM', 'throttle:30,1'])
+        ->name('nurse.patient-chats.start');
+
+    Route::get('/conversations/{conversation}/messages/{message}/attachment', [ConversationController::class, 'messageAttachment'])
+        ->middleware(['role:PATIENT,MEDICAL_TEAM'])
+        ->name('portal.conversations.messages.attachment');
 
     Route::post('/conversations/{conversation}/messages', [ConversationController::class, 'storeMessage'])
-        ->middleware(['role:PATIENT,MEDICAL_TEAM'])
+        ->middleware(['role:PATIENT,MEDICAL_TEAM', 'throttle:60,1'])
         ->name('portal.conversations.messages');
 
     Route::get('/facility', [RolePagesController::class, 'facilityDashboard'])

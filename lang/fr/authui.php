@@ -30,6 +30,7 @@ return [
     'role_label' => 'Type de compte',
     'role_patient' => 'Patient',
     'role_medical_team' => 'Personnel médical',
+    'role_nurse' => 'Infirmier·ère',
     'role_ambulance' => 'Équipe ambulance',
     'role_facility' => 'Établissement / Hôpital',
     'role_hospital_owner' => 'Propriétaire d\'hôpital',
@@ -54,14 +55,14 @@ return [
     'reset_button' => 'Réinitialiser le mot de passe',
 
     'verify_title' => "Vérification de l'e-mail",
-    'verify_prompt' => "Veuillez vérifier votre adresse e-mail en cliquant sur le lien que nous venons de vous envoyer.",
+    'verify_prompt' => 'Veuillez vérifier votre adresse e-mail en cliquant sur le lien que nous venons de vous envoyer.',
     'verify_sent' => "Un nouveau lien de vérification a été envoyé à l'adresse e-mail fournie lors de l'inscription.",
     'verify_resend' => "Renvoyer l'e-mail de vérification",
     'logout' => 'Déconnexion',
 
     'confirm_title' => 'Confirmer le mot de passe',
     'confirm_header' => 'Confirmer le mot de passe',
-    'confirm_desc' => "Zone sécurisée. Veuillez confirmer votre mot de passe avant de continuer.",
+    'confirm_desc' => 'Zone sécurisée. Veuillez confirmer votre mot de passe avant de continuer.',
     'confirm_button' => 'Confirmer',
 
     'two_factor_title' => 'Authentification à deux facteurs',
@@ -75,4 +76,3 @@ return [
     'login_using_recovery' => 'vous connecter avec un code de récupération',
     'login_using_auth_code' => "vous connecter avec un code d'authentification",
 ];
-

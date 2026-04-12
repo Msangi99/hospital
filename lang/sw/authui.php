@@ -30,6 +30,7 @@ return [
     'role_label' => 'Aina ya akaunti',
     'role_patient' => 'Mgonjwa',
     'role_medical_team' => 'Mtoa huduma (Staff)',
+    'role_nurse' => 'Muuguzi',
     'role_ambulance' => 'Timu ya ambulance',
     'role_facility' => 'Hospitali / Kituo',
     'role_hospital_owner' => 'Mmiliki wa hospitali',
@@ -75,4 +76,3 @@ return [
     'login_using_recovery' => 'ingia kwa kutumia msimbo wa dharura',
     'login_using_auth_code' => 'ingia kwa kutumia msimbo wa uthibitisho',
 ];
-

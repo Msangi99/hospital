@@ -1,6 +1,7 @@
 @php($sidebarTitle = __('roleui.owner_portal'))
 @php($roleLabelMap = [
     'MEDICAL_TEAM' => __('authui.role_medical_team'),
+    'NURSE' => __('authui.role_nurse'),
     'PATIENT' => __('authui.role_patient'),
     'FACILITY' => __('authui.role_facility'),
     'AMBULANCE' => __('authui.role_ambulance'),

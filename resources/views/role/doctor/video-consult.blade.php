@@ -2,7 +2,7 @@
 
 @component('layouts.role-dashboard', ['title' => __('roleui.sidebar_video_consult'), 'sidebarTitle' => $sidebarTitle])
     @slot('sidebar')
-        @include('role.doctor._sidebar', ['active' => 'video'])
+        @include('role.doctor._sidebar', ['active' => 'video-requests'])
     @endslot
 
     @include('role.partials.video-consult-panel')

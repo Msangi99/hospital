@@ -153,9 +153,17 @@
                                 <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-xs font-black text-white">
                                     {{ auth()->user()?->initials() }}
                                 </div>
+                                @php
+                                    $settingsHeaderRoleLabel = auth()->user()?->role;
+                                    if ($settingsHeaderRoleLabel === 'MEDICAL_TEAM' && auth()->check()) {
+                                        $settingsHeaderRoleLabel = \App\Services\ConversationAccess::isStaffNurse(auth()->user())
+                                            ? __('authui.role_nurse')
+                                            : __('roleui.portal_role_clinician');
+                                    }
+                                @endphp
                                 <div class="max-w-[10rem] leading-tight">
                                     <div class="truncate text-sm font-black text-slate-900">{{ auth()->user()?->name }}</div>
-                                    <div class="truncate text-[10px] font-black uppercase tracking-widest text-slate-400">{{ auth()->user()?->role }}</div>
+                                    <div class="truncate text-[10px] font-black uppercase tracking-widest text-slate-400">{{ $settingsHeaderRoleLabel }}</div>
                                     @if ($hospitalName)
                                         <div class="truncate text-[10px] font-black uppercase tracking-widest text-blue-600">{{ $hospitalName }}</div>
                                     @endif

@@ -4,14 +4,37 @@
         @include('partials.head')
         <meta name="csrf-token" content="{{ csrf_token() }}">
         @auth
-            @if (in_array((string) auth()->user()->role, ['MEDICAL_TEAM', 'PATIENT'], true))
-                @if ((string) auth()->user()->role === 'MEDICAL_TEAM')
+            @php
+                $echoUser = auth()->user();
+                $echoRole = $echoUser ? (string) $echoUser->role : '';
+            @endphp
+            @if (in_array($echoRole, ['MEDICAL_TEAM', 'PATIENT', 'AMBULANCE'], true))
+                @if (config('broadcasting.default') === 'reverb' && filled(config('broadcasting.connections.reverb.key')))
+                    <meta name="reverb-app-key" content="{{ config('broadcasting.connections.reverb.key') }}">
+                    <meta name="reverb-host" content="{{ config('broadcasting.connections.reverb.options.host') }}">
+                    <meta name="reverb-port" content="{{ (string) config('broadcasting.connections.reverb.options.port') }}">
+                    <meta name="reverb-scheme" content="{{ config('broadcasting.connections.reverb.options.scheme') }}">
+                @endif
+                @if ($echoRole === 'MEDICAL_TEAM')
                     <meta name="doctor-broadcast-id" content="{{ auth()->id() }}">
                     <script>
                         window.__videoToastLabels = {
                             title: @json(__('roleui.video_toast_title')),
                             join: @json(__('roleui.video_toast_join')),
                             dismiss: @json(__('roleui.video_toast_dismiss')),
+                        };
+                    </script>
+                @endif
+                @if ($echoRole === 'AMBULANCE')
+                    <meta
+                        name="ambulance-hospital-ids"
+                        content="{{ \App\Models\HospitalWorkerMembership::query()->where('user_id', auth()->id())->where('worker_role', 'AMBULANCE')->where('status', 'ACTIVE')->pluck('hospital_id')->implode(',') }}"
+                    >
+                    <script>
+                        window.__ambulanceSosToastLabels = {
+                            title: @json(__('roleui.ambulance_sos_toast_title')),
+                            dismiss: @json(__('roleui.ambulance_sos_toast_dismiss')),
+                            cta: @json(__('roleui.ambulance_sos_toast_open')),
                         };
                     </script>
                 @endif
@@ -55,6 +78,14 @@
                         });
                     </script>
                 @endif
+            @endif
+            @if ((string) auth()->user()->role === 'AMBULANCE')
+                <div
+                    id="ambulance-sos-toast"
+                    class="fixed left-1/2 top-6 z-[70] hidden w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 px-2"
+                    role="status"
+                    aria-live="polite"
+                ></div>
             @endif
         @endauth
         <div class="h-screen flex overflow-hidden">
@@ -146,9 +177,17 @@
                                 <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-xs font-black text-white">
                                     {{ auth()->user()?->initials() }}
                                 </div>
+                                @php
+                                    $headerRoleLabel = auth()->user()?->role;
+                                    if ($headerRoleLabel === 'MEDICAL_TEAM' && auth()->check()) {
+                                        $headerRoleLabel = \App\Services\ConversationAccess::isStaffNurse(auth()->user())
+                                            ? __('authui.role_nurse')
+                                            : __('roleui.portal_role_clinician');
+                                    }
+                                @endphp
                                 <div class="max-w-[10rem] leading-tight">
                                     <div class="truncate text-sm font-black text-slate-900">{{ auth()->user()?->name }}</div>
-                                    <div class="truncate text-[10px] font-black uppercase tracking-widest text-slate-400">{{ auth()->user()?->role }}</div>
+                                    <div class="truncate text-[10px] font-black uppercase tracking-widest text-slate-400">{{ $headerRoleLabel }}</div>
                                     @if ($hospitalName)
                                         <div class="truncate text-[10px] font-black uppercase tracking-widest text-blue-500">{{ $hospitalName }}</div>
                                     @endif

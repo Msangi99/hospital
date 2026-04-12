@@ -14,7 +14,20 @@ class PatientDoctorConversation extends Model
         'patient_id',
         'doctor_id',
         'hospital_id',
+        'title',
     ];
+
+    public function displayTitle(): string
+    {
+        $t = trim((string) ($this->title ?? ''));
+        if ($t !== '') {
+            return $t;
+        }
+
+        $name = trim((string) ($this->patient?->name ?? ''));
+
+        return $name !== '' ? $name : (string) __('roleui.conversations_untitled_chat');
+    }
 
     public function patient(): BelongsTo
     {

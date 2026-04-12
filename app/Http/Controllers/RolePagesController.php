@@ -9,16 +9,21 @@ use App\Models\Hospital;
 use App\Models\HospitalWorkerMembership;
 use App\Models\MedicalProfile;
 use App\Models\NewsletterSubscriber;
+use App\Models\PatientDoctorConversation;
 use App\Models\SafeGirlSymptom;
 use App\Models\SosRequest;
 use App\Models\User;
 use App\Models\VideoSession;
 use App\Services\AiProviderModelsListService;
+use App\Services\AmbulanceSosSubmissionService;
+use App\Services\ConversationAccess;
+use App\Services\HospitalNetworkService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RolePagesController extends Controller
@@ -29,9 +34,44 @@ class RolePagesController extends Controller
         $user = request()->user();
         $hospital = Hospital::query()->where('owner_user_id', $user->id)->first();
 
-        return view('role.owner.dashboard', [
+        return view('role.owner.overview', [
             'hospital' => $hospital,
         ]);
+    }
+
+    public function hospitalOwnerProfilePage(): View
+    {
+        /** @var User $user */
+        $user = request()->user();
+        $hospital = Hospital::query()->where('owner_user_id', $user->id)->first();
+
+        return view('role.owner.profile', [
+            'hospital' => $hospital,
+        ]);
+    }
+
+    public function hospitalOwnerKycSubmit(Request $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $hospital = Hospital::query()->where('owner_user_id', $user->id)->firstOrFail();
+
+        if (in_array((string) $hospital->verification_status, ['APPROVED'], true)) {
+            return back()->with('status', __('roleui.owner_kyc_already_approved'));
+        }
+
+        $hospital->verification_status = 'PENDING';
+        $hospital->kyc_submitted_at = now();
+        $hospital->verified_at = null;
+        $hospital->verified_by_user_id = null;
+        $hospital->save();
+
+        if (! in_array((string) $user->status, ['ACTIVE'], true)) {
+            $user->status = 'PENDING';
+            $user->save();
+        }
+
+        return back()->with('status', __('roleui.owner_kyc_submitted'));
     }
 
     public function hospitalOwnerSection(string $section): View
@@ -72,7 +112,7 @@ class RolePagesController extends Controller
         return view('role.owner.workers', [
             'hospital' => $hospital,
             'workers' => $workers,
-            'workerRoles' => ['MEDICAL_TEAM', 'PATIENT', 'FACILITY', 'AMBULANCE'],
+            'workerRoles' => ['MEDICAL_TEAM', 'NURSE', 'PATIENT', 'FACILITY', 'AMBULANCE'],
             'workerStatuses' => ['ACTIVE', 'PENDING', 'SUSPENDED'],
         ]);
     }
@@ -83,7 +123,7 @@ class RolePagesController extends Controller
         $owner = $request->user();
         $hospital = Hospital::query()->where('owner_user_id', $owner->id)->firstOrFail();
 
-        $roles = ['MEDICAL_TEAM', 'PATIENT', 'FACILITY', 'AMBULANCE'];
+        $roles = ['MEDICAL_TEAM', 'NURSE', 'PATIENT', 'FACILITY', 'AMBULANCE'];
         $statuses = ['ACTIVE', 'PENDING', 'SUSPENDED'];
 
         $data = $request->validate([
@@ -95,12 +135,14 @@ class RolePagesController extends Controller
             'password' => ['required', 'string', 'min:8', 'max:255'],
         ]);
 
+        $systemRole = $data['worker_role'] === 'NURSE' ? 'MEDICAL_TEAM' : $data['worker_role'];
+
         $user = User::query()->create([
             'name' => $data['name'],
             'full_name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
-            'role' => $data['worker_role'],
+            'role' => $systemRole,
             'status' => $data['status'],
             'password' => Hash::make($data['password']),
         ]);
@@ -172,12 +214,121 @@ class RolePagesController extends Controller
 
     public function adminDashboard(): View
     {
-        return view('role.admin.dashboard');
+        $ownerHospitalKyc = [
+            'pending_review' => Hospital::query()
+                ->whereNotNull('owner_user_id')
+                ->where('verification_status', 'PENDING')
+                ->count(),
+            'with_owner_total' => Hospital::query()->whereNotNull('owner_user_id')->count(),
+            'submitted_timestamp_count' => Hospital::query()
+                ->whereNotNull('owner_user_id')
+                ->whereNotNull('kyc_submitted_at')
+                ->count(),
+        ];
+
+        return view('role.admin.dashboard', [
+            'ownerHospitalKyc' => $ownerHospitalKyc,
+        ]);
     }
 
     public function adminEmergencies(): View
     {
-        return view('role.admin.emergencies');
+        $requests = SosRequest::query()
+            ->with(['requester:id,name,email,phone', 'assignedTo:id,name,email,phone'])
+            ->orderByDesc('id')
+            ->limit(200)
+            ->get();
+
+        $ambulanceUsers = User::query()
+            ->where('role', 'AMBULANCE')
+            ->where('status', 'ACTIVE')
+            ->orderBy('name')
+            ->get(['id', 'name', 'email', 'phone', 'ambulance_availability']);
+
+        return view('role.admin.emergencies', [
+            'requests' => $requests,
+            'ambulanceUsers' => $ambulanceUsers,
+        ]);
+    }
+
+    public function adminEmergenciesAssign(Request $request, SosRequest $sos): RedirectResponse
+    {
+        $data = $request->validate([
+            'assigned_user_id' => ['required', 'integer', 'exists:users,id'],
+        ]);
+
+        $assignee = User::query()->findOrFail((int) $data['assigned_user_id']);
+        if ((string) $assignee->role !== 'AMBULANCE') {
+            return redirect()
+                ->route('admin.emergencies')
+                ->with('error', __('roleui.admin_emergency_assign_not_ambulance'));
+        }
+
+        if ($sos->status !== SosRequest::STATUS_RECEIVED || $sos->assigned_user_id !== null) {
+            return redirect()
+                ->route('admin.emergencies')
+                ->with('error', __('roleui.admin_emergency_assign_invalid'));
+        }
+
+        $sos->assigned_user_id = $assignee->id;
+        $sos->status = SosRequest::STATUS_DISPATCHED;
+        $sos->dispatched_at = now();
+        $sos->save();
+
+        return redirect()
+            ->route('admin.emergencies')
+            ->with('status', __('roleui.admin_emergency_assigned'));
+    }
+
+    public function adminEmergenciesCancel(Request $request, SosRequest $sos): RedirectResponse
+    {
+        if ($sos->isTerminal()) {
+            return redirect()
+                ->route('admin.emergencies')
+                ->with('error', __('roleui.admin_emergency_cancel_invalid'));
+        }
+
+        $sos->status = SosRequest::STATUS_CANCELLED;
+        $sos->completed_at = now();
+        $sos->save();
+
+        return redirect()
+            ->route('admin.emergencies')
+            ->with('status', __('roleui.admin_emergency_cancelled'));
+    }
+
+    public function adminOwnerKyc(): View
+    {
+        $hospitals = Hospital::query()
+            ->with(['owner:id,name,email,phone,status,created_at'])
+            ->whereNotNull('owner_user_id')
+            ->orderByDesc('kyc_submitted_at')
+            ->orderByDesc('created_at')
+            ->get();
+
+        $stats = [
+            'pending_review' => Hospital::query()
+                ->whereNotNull('owner_user_id')
+                ->where('verification_status', 'PENDING')
+                ->count(),
+            'approved' => Hospital::query()
+                ->whereNotNull('owner_user_id')
+                ->where('verification_status', 'APPROVED')
+                ->count(),
+            'rejected' => Hospital::query()
+                ->whereNotNull('owner_user_id')
+                ->where('verification_status', 'REJECTED')
+                ->count(),
+            'suspended' => Hospital::query()
+                ->whereNotNull('owner_user_id')
+                ->where('verification_status', 'SUSPENDED')
+                ->count(),
+        ];
+
+        return view('role.admin.owner-kyc', [
+            'hospitals' => $hospitals,
+            'stats' => $stats,
+        ]);
     }
 
     public function adminNewsletter(): View
@@ -369,6 +520,7 @@ class RolePagesController extends Controller
                 'latitude',
                 'longitude',
                 'created_at',
+                'kyc_submitted_at',
             ])
             ->orderByDesc('created_at')
             ->get();
@@ -679,8 +831,10 @@ class RolePagesController extends Controller
 
         $totalPatients = Appointment::query()
             ->where('doctor_id', $doctor->id)
-            ->distinct('patient_id')
-            ->count('patient_id');
+            ->whereNotNull('patient_id')
+            ->pluck('patient_id')
+            ->unique()
+            ->count();
 
         $nextAppointments = Appointment::query()
             ->where('doctor_id', $doctor->id)
@@ -694,8 +848,11 @@ class RolePagesController extends Controller
             ->whereIn('id', $nextAppointments->pluck('patient_id')->filter()->values())
             ->pluck('name', 'id');
 
+        $medicalIsNurse = $profile !== null && (string) ($profile->staff_type ?? '') === 'NURSE';
+
         return view('role.doctor.dashboard', [
             'profile' => $profile,
+            'medicalIsNurse' => $medicalIsNurse,
             'stats' => [
                 'today_appointments' => $todayAppointments,
                 'upcoming_appointments' => $upcomingAppointments,
@@ -717,7 +874,21 @@ class RolePagesController extends Controller
             ->whereNull('end_time')
             ->latest('id')
             ->limit(50)
-            ->get(['id', 'patient_id', 'room_id', 'start_time']);
+            ->get(['id', 'patient_id', 'room_id', 'start_time', 'doctor_joined_at']);
+
+        foreach ($videoRequests as $session) {
+            if ($session->doctor_joined_at !== null) {
+                $session->setAttribute('video_call_status', 'joined');
+            } elseif ($session->doctorVideoRingIsActive()) {
+                $session->setAttribute('video_call_status', 'ringing');
+            } else {
+                $session->setAttribute('video_call_status', 'missed');
+            }
+        }
+
+        $videoDoctorHasRingingRequest = $videoRequests->contains(
+            fn ($s) => (string) $s->getAttribute('video_call_status') === 'ringing'
+        );
 
         $videoPatientNames = User::query()
             ->whereIn('id', $videoRequests->pluck('patient_id')->filter()->values())
@@ -726,6 +897,7 @@ class RolePagesController extends Controller
         return view('role.doctor.video-requests', [
             'videoRequests' => $videoRequests,
             'videoPatientNames' => $videoPatientNames,
+            'videoDoctorHasRingingRequest' => $videoDoctorHasRingingRequest,
         ]);
     }
 
@@ -742,10 +914,7 @@ class RolePagesController extends Controller
             ->limit(200)
             ->get();
 
-        $patients = User::query()
-            ->where('role', 'PATIENT')
-            ->where('status', 'ACTIVE')
-            ->orderBy('name')
+        $patients = HospitalNetworkService::assignablePatientsQueryForDoctor($doctor)
             ->select(['id', 'name', 'email', 'phone'])
             ->limit(500)
             ->get();
@@ -777,9 +946,17 @@ class RolePagesController extends Controller
         $patient = User::query()->findOrFail((int) $data['patient_id']);
         abort_unless((string) $patient->role === 'PATIENT', 422, 'Selected user is not a patient.');
 
+        $sharedHospitalId = HospitalNetworkService::firstSharedActiveHospitalId($doctor, $patient);
+        if ($sharedHospitalId === null) {
+            throw ValidationException::withMessages([
+                'patient_id' => [__('roleui.appointment_patient_not_in_network')],
+            ]);
+        }
+
         Appointment::query()->create([
             'patient_id' => (int) $data['patient_id'],
             'doctor_id' => (int) $doctor->id,
+            'hospital_id' => $sharedHospitalId,
             'appointment_date' => (string) $data['appointment_date'],
             'appointment_time' => (string) $data['appointment_time'],
             'reason' => ($data['reason'] ?? null) ?: null,
@@ -789,7 +966,7 @@ class RolePagesController extends Controller
 
         return redirect()
             ->route('doctor.appointments')
-            ->with('status', 'Appointment created successfully.');
+            ->with('status', __('roleui.doctor_appointment_created'));
     }
 
     public function doctorPatients(): View
@@ -800,6 +977,11 @@ class RolePagesController extends Controller
         $patientIds = Appointment::query()
             ->where('doctor_id', $doctor->id)
             ->pluck('patient_id')
+            ->merge(
+                PatientDoctorConversation::query()
+                    ->where('doctor_id', $doctor->id)
+                    ->pluck('patient_id')
+            )
             ->filter()
             ->unique()
             ->values();
@@ -844,8 +1026,12 @@ class RolePagesController extends Controller
         $doctor = request()->user();
         $profile = MedicalProfile::query()->where('user_id', $doctor->id)->first();
 
+        $defaultStaffType = $profile?->staff_type
+            ?? (ConversationAccess::isStaffNurse($doctor) ? 'NURSE' : 'MD');
+
         return view('role.doctor.complete-profile', [
             'profile' => $profile,
+            'defaultStaffType' => $defaultStaffType,
         ]);
     }
 
@@ -884,7 +1070,30 @@ class RolePagesController extends Controller
 
     public function patientDashboard(): View
     {
-        return view('role.patient.dashboard');
+        /** @var User $patient */
+        $patient = request()->user();
+
+        $upcomingAppointments = Appointment::query()
+            ->where('patient_id', $patient->id)
+            ->where('appointment_date', '>=', now()->toDateString())
+            ->orderBy('appointment_date')
+            ->orderBy('appointment_time')
+            ->limit(6)
+            ->get();
+
+        $doctorNames = User::query()
+            ->whereIn('id', $upcomingAppointments->pluck('doctor_id')->filter()->values())
+            ->pluck('name', 'id');
+
+        $conversationCount = PatientDoctorConversation::query()
+            ->where('patient_id', $patient->id)
+            ->count();
+
+        return view('role.patient.dashboard', [
+            'upcomingAppointments' => $upcomingAppointments,
+            'doctorNames' => $doctorNames,
+            'conversationCount' => $conversationCount,
+        ]);
     }
 
     public function patientAppointments(): View
@@ -907,6 +1116,48 @@ class RolePagesController extends Controller
             'appointments' => $appointments,
             'doctorNames' => $doctorNames,
         ]);
+    }
+
+    public function patientRecords(): View
+    {
+        /** @var User $patient */
+        $patient = request()->user();
+
+        $visits = Appointment::query()
+            ->where('patient_id', $patient->id)
+            ->orderByDesc('appointment_date')
+            ->orderByDesc('appointment_time')
+            ->limit(150)
+            ->get();
+
+        $doctorNames = User::query()
+            ->whereIn('id', $visits->pluck('doctor_id')->filter()->values())
+            ->pluck('name', 'id');
+
+        return view('role.patient.records', [
+            'visits' => $visits,
+            'doctorNames' => $doctorNames,
+        ]);
+    }
+
+    public function patientBilling(): View
+    {
+        return view('role.patient.billing');
+    }
+
+    public function patientHelp(): View
+    {
+        return view('role.patient.help');
+    }
+
+    public function patientAmbulance(): View
+    {
+        return view('role.patient.ambulance');
+    }
+
+    public function patientAmbulanceSos(Request $request, AmbulanceSosSubmissionService $sos): RedirectResponse
+    {
+        return $sos->submit($request, 'patient.ambulance');
     }
 
     public function facilityDashboard(): View

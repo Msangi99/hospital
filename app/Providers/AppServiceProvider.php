@@ -44,24 +44,27 @@ class AppServiceProvider extends ServiceProvider
                 return;
             }
 
-            $latest = VideoSession::query()
+            $latestRinging = VideoSession::query()
                 ->where('doctor_id', $user->id)
                 ->whereNull('end_time')
+                ->whereNull('doctor_joined_at')
+                ->where('start_time', '>', now()->subSeconds(VideoSession::DOCTOR_RING_GRACE_SECONDS))
                 ->latest('id')
-                ->first(['patient_id', 'room_id']);
+                ->first(['id', 'patient_id', 'room_id', 'start_time', 'doctor_joined_at', 'end_time']);
 
-            if (! $latest) {
+            if (! $latestRinging) {
                 $view->with('doctorInitialVideoToast', null);
 
                 return;
             }
 
-            $patientName = User::query()->whereKey($latest->patient_id)->value('name')
+            $patientName = User::query()->whereKey($latestRinging->patient_id)->value('name')
                 ?? __('roleui.video_requests_unknown_patient');
 
             $view->with('doctorInitialVideoToast', [
+                'video_session_id' => (int) $latestRinging->id,
                 'patient_name' => (string) $patientName,
-                'join_url' => route('doctor.video-consult', ['room' => $latest->room_id]),
+                'join_url' => route('doctor.video-consult', ['room' => $latestRinging->room_id]),
             ]);
         });
     }

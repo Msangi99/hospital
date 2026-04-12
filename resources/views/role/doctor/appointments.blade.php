@@ -19,35 +19,42 @@
         @endif
 
         <div class="rounded-[2.5rem] border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
-            <h2 class="mb-4 text-xs font-black uppercase tracking-[0.2em] text-slate-500">Create Appointment</h2>
+            <h2 class="mb-4 text-xs font-black uppercase tracking-[0.2em] text-slate-500">{{ __('roleui.doctor_appt_form_heading') }}</h2>
             <form method="POST" action="{{ route('doctor.appointments.store') }}" class="grid gap-4 md:grid-cols-2">
                 @csrf
                 <div class="md:col-span-2">
-                    <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Patient</label>
+                    <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{{ __('roleui.doctor_appt_form_patient') }}</label>
                     <select name="patient_id" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none focus:border-blue-500">
-                        <option value="">Select patient</option>
+                        <option value="">{{ __('roleui.doctor_appt_form_select_patient') }}</option>
                         @foreach($patients as $patient)
                             <option value="{{ $patient->id }}" @selected((int) old('patient_id') === (int) $patient->id)>
                                 {{ $patient->name }} ({{ $patient->email }})
                             </option>
                         @endforeach
                     </select>
+                    @if ($patients->isEmpty())
+                        <p class="mt-2 text-xs font-bold text-amber-700">{{ __('roleui.appointment_picker_empty_hint') }}</p>
+                    @endif
                 </div>
                 <div>
-                    <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Date</label>
+                    <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{{ __('roleui.doctor_appt_form_date') }}</label>
                     <input type="date" name="appointment_date" value="{{ old('appointment_date', $today) }}" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none focus:border-blue-500">
                 </div>
                 <div>
-                    <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Time</label>
+                    <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{{ __('roleui.doctor_appt_form_time') }}</label>
                     <input type="time" name="appointment_time" value="{{ old('appointment_time') }}" required class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none focus:border-blue-500">
                 </div>
                 <div class="md:col-span-2">
-                    <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Reason</label>
-                    <textarea name="reason" rows="3" class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none focus:border-blue-500" placeholder="Optional consultation reason">{{ old('reason') }}</textarea>
+                    <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{{ __('roleui.doctor_appt_form_reason') }}</label>
+                    <textarea name="reason" rows="3" class="w-full rounded-2xl border border-slate-100 bg-white p-4 text-sm font-bold outline-none focus:border-blue-500" placeholder="{{ __('roleui.doctor_appt_form_reason_placeholder') }}">{{ old('reason') }}</textarea>
                 </div>
                 <div class="md:col-span-2">
-                    <button type="submit" class="rounded-2xl bg-slate-900 px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-blue-600">
-                        Save Appointment
+                    <button
+                        type="submit"
+                        @disabled($patients->isEmpty())
+                        class="rounded-2xl bg-slate-900 px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500"
+                    >
+                        {{ __('roleui.doctor_appt_form_submit') }}
                     </button>
                 </div>
             </form>
@@ -55,23 +62,23 @@
 
         <div class="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-sm">
             <div class="border-b border-slate-100 px-6 py-4">
-                <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Appointment History</h2>
+                <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{{ __('roleui.doctor_appt_history_heading') }}</h2>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-100">
                     <thead class="bg-slate-50">
                         <tr class="text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-                            <th class="px-6 py-3">Patient</th>
-                            <th class="px-6 py-3">Date</th>
-                            <th class="px-6 py-3">Time</th>
-                            <th class="px-6 py-3">Status</th>
-                            <th class="px-6 py-3">Reason</th>
+                            <th class="px-6 py-3">{{ __('roleui.doctor_patients_col_patient') }}</th>
+                            <th class="px-6 py-3">{{ __('roleui.doctor_appt_form_date') }}</th>
+                            <th class="px-6 py-3">{{ __('roleui.doctor_appt_form_time') }}</th>
+                            <th class="px-6 py-3">{{ __('roleui.patient_appt_col_status') }}</th>
+                            <th class="px-6 py-3">{{ __('roleui.patient_appt_col_reason') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($appointments as $appointment)
                             <tr>
-                                <td class="px-6 py-3 text-sm font-black text-slate-800">{{ $patientNames[$appointment->patient_id] ?? 'Unknown' }}</td>
+                                <td class="px-6 py-3 text-sm font-black text-slate-800">{{ $patientNames[$appointment->patient_id] ?? __('roleui.doctor_appt_unknown_patient') }}</td>
                                 <td class="px-6 py-3 text-xs font-bold text-slate-500">{{ $appointment->appointment_date }}</td>
                                 <td class="px-6 py-3 text-xs font-bold text-slate-500">{{ $appointment->appointment_time }}</td>
                                 <td class="px-6 py-3 text-xs font-black text-slate-500">{{ $appointment->status }}</td>
@@ -79,7 +86,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-sm font-bold text-slate-400">No appointments yet.</td>
+                                <td colspan="5" class="px-6 py-10 text-center text-sm font-bold text-slate-400">{{ __('roleui.doctor_appt_history_empty') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

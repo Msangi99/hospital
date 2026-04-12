@@ -35,7 +35,19 @@ class Hospital extends Model
         'verified_at',
         'verified_by_user_id',
         'verification_note',
+        'kyc_submitted_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'verified_at' => 'datetime',
+            'kyc_submitted_at' => 'datetime',
+            'has_emergency_services' => 'boolean',
+            'latitude' => 'float',
+            'longitude' => 'float',
+        ];
+    }
 
     /**
      * Great-circle distance in kilometers (WGS84 sphere).
@@ -62,4 +74,3 @@ class Hospital extends Model
         return $this->hasMany(HospitalWorkerMembership::class);
     }
 }
-
