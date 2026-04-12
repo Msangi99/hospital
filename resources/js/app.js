@@ -712,7 +712,17 @@ function appendConversationMessage(e, currentUserId) {
 document.addEventListener('DOMContentLoaded', function () {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    const key = readBroadcastMeta('reverb-app-key') || import.meta.env.VITE_REVERB_APP_KEY;
+    let broadcastDriver = readBroadcastMeta('broadcast-driver');
+    if (! broadcastDriver) {
+        if (readBroadcastMeta('pusher-app-key') || import.meta.env.VITE_PUSHER_APP_KEY) {
+            broadcastDriver = 'pusher';
+        } else if (readBroadcastMeta('reverb-app-key') || import.meta.env.VITE_REVERB_APP_KEY) {
+            broadcastDriver = 'reverb';
+        }
+    }
+
+    const pusherKey = readBroadcastMeta('pusher-app-key') || import.meta.env.VITE_PUSHER_APP_KEY || '';
+    const reverbKey = readBroadcastMeta('reverb-app-key') || import.meta.env.VITE_REVERB_APP_KEY || '';
     const host = readBroadcastMeta('reverb-host') || import.meta.env.VITE_REVERB_HOST || '127.0.0.1';
     const port = readBroadcastMeta('reverb-port') || import.meta.env.VITE_REVERB_PORT || '8080';
     const scheme = readBroadcastMeta('reverb-scheme') || import.meta.env.VITE_REVERB_SCHEME || 'http';
@@ -721,26 +731,44 @@ document.addEventListener('DOMContentLoaded', function () {
     initPortalConversationComposer();
     initDnCoordinationComposer();
 
-    if (! key || ! csrf) {
+    const echoKey = broadcastDriver === 'pusher' ? pusherKey : reverbKey;
+    if (! echoKey || ! csrf) {
         return;
     }
 
     if (! window.Echo) {
-        window.Echo = new Echo({
-            broadcaster: 'reverb',
-            key: key,
-            wsHost: host,
-            wsPort: Number(port) || 8080,
-            wssPort: Number(port) || 8080,
-            forceTLS: scheme === 'https',
-            enabledTransports: ['ws', 'wss'],
-            authEndpoint: '/broadcasting/auth',
-            auth: {
-                headers: {
-                    'X-CSRF-TOKEN': csrf ?? '',
+        if (broadcastDriver === 'pusher') {
+            const cluster = readBroadcastMeta('pusher-cluster') || import.meta.env.VITE_PUSHER_APP_CLUSTER || 'mt1';
+            const pusherScheme = readBroadcastMeta('pusher-scheme') || import.meta.env.VITE_PUSHER_SCHEME || 'https';
+            window.Echo = new Echo({
+                broadcaster: 'pusher',
+                key: pusherKey,
+                cluster: cluster,
+                forceTLS: pusherScheme === 'https',
+                authEndpoint: '/broadcasting/auth',
+                auth: {
+                    headers: {
+                        'X-CSRF-TOKEN': csrf ?? '',
+                    },
                 },
-            },
-        });
+            });
+        } else {
+            window.Echo = new Echo({
+                broadcaster: 'reverb',
+                key: reverbKey,
+                wsHost: host,
+                wsPort: Number(port) || 8080,
+                wssPort: Number(port) || 8080,
+                forceTLS: scheme === 'https',
+                enabledTransports: ['ws', 'wss'],
+                authEndpoint: '/broadcasting/auth',
+                auth: {
+                    headers: {
+                        'X-CSRF-TOKEN': csrf ?? '',
+                    },
+                },
+            });
+        }
     }
 
     const toastMount = document.getElementById('doctor-video-toast');

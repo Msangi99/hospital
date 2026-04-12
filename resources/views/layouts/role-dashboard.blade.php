@@ -9,7 +9,14 @@
                 $echoRole = $echoUser ? (string) $echoUser->role : '';
             @endphp
             @if (in_array($echoRole, ['MEDICAL_TEAM', 'PATIENT', 'AMBULANCE'], true))
-                @if (config('broadcasting.default') === 'reverb' && filled(config('broadcasting.connections.reverb.key')))
+                @if (config('broadcasting.default') === 'pusher' && filled(config('broadcasting.connections.pusher.key')))
+                    @php($pusherCluster = (string) (config('broadcasting.connections.pusher.options.cluster') ?: 'mt1'))
+                    <meta name="broadcast-driver" content="pusher">
+                    <meta name="pusher-app-key" content="{{ config('broadcasting.connections.pusher.key') }}">
+                    <meta name="pusher-cluster" content="{{ $pusherCluster }}">
+                    <meta name="pusher-scheme" content="{{ config('broadcasting.connections.pusher.options.scheme') ?? 'https' }}">
+                @elseif (config('broadcasting.default') === 'reverb' && filled(config('broadcasting.connections.reverb.key')))
+                    <meta name="broadcast-driver" content="reverb">
                     <meta name="reverb-app-key" content="{{ config('broadcasting.connections.reverb.key') }}">
                     <meta name="reverb-host" content="{{ config('broadcasting.connections.reverb.options.host') }}">
                     <meta name="reverb-port" content="{{ (string) config('broadcasting.connections.reverb.options.port') }}">

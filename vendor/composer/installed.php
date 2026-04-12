@@ -3,7 +3,7 @@
         'name' => 'laravel/livewire-starter-kit',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'c7016bf1804014e84431edd4a409c3272aad6192',
+        'reference' => '34d5a432313475e70dadb0d054455f5117056588',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -616,7 +616,7 @@
         'laravel/livewire-starter-kit' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'c7016bf1804014e84431edd4a409c3272aad6192',
+            'reference' => '34d5a432313475e70dadb0d054455f5117056588',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -769,7 +769,7 @@
         'macellan/laravel-jitsi' => array(
             'pretty_version' => '1.0.0',
             'version' => '1.0.0.0',
-            'reference' => '07a4d9a1612875674bbcc48e41332bb8c334bce1',
+            'reference' => '7e274717039fe2cbf21bd8576994d79835eddbdd',
             'type' => 'library',
             'install_path' => __DIR__ . '/../macellan/laravel-jitsi',
             'aliases' => array(),

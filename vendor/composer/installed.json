@@ -4475,7 +4475,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/macellan/laravel-jitsi",
-                "reference": "07a4d9a1612875674bbcc48e41332bb8c334bce1"
+                "reference": "7e274717039fe2cbf21bd8576994d79835eddbdd"
             },
             "require": {
                 "illuminate/contracts": "^13.0",

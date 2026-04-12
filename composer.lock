@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "986b047c6d635b9341d47aeeb524a576",
+    "content-hash": "2cbcc9407727722763682c4ab82e6a02",
     "packages": [
         {
             "name": "archtechx/enums",
@@ -3651,7 +3651,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/macellan/laravel-jitsi",
-                "reference": "07a4d9a1612875674bbcc48e41332bb8c334bce1"
+                "reference": "7e274717039fe2cbf21bd8576994d79835eddbdd"
             },
             "require": {
                 "illuminate/contracts": "^13.0",
